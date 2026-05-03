@@ -88,11 +88,24 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
             ::std::vector<double> phases = physics_->snipe_phases(n, m, eval_ctx);
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
                 eval_ctx.transducers[i].phase_rad = phases[i];
-                eval_ctx.transducers[i].amplitude = 25.0;
+                eval_ctx.transducers[i].frequency = freq;
             }
 
+            // Binary search for minimum amplitude (0.0 to 25.0 Watts) required for 1G
+            double low = 0.0, high = 25.0, best_amp = 25.0;
             if (!physics_->validate_power(freq, eval_ctx)) continue;
-            feasible_count++;
+
+            for (int iter = 0; iter < 10; ++iter) {
+                double mid = (low + high) / 2.0;
+                for (auto& t : eval_ctx.transducers) t.amplitude = mid;
+                if (physics_->validate_power(freq, eval_ctx)) {
+                    high = mid;
+                    best_amp = mid;
+                } else {
+                    low = mid;
+                }
+            }
+            for (auto& t : eval_ctx.transducers) t.amplitude = best_amp;
 
             Eigen::MatrixXcd resp = physics_->compute_driven_response(freq, eval_ctx);
             Eigen::VectorXcd sig = Eigen::Map<Eigen::VectorXcd>(resp.data(), resp.size());
@@ -165,27 +178,92 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
         population = next_gen;
     }
 
-    export_to_csv(params.export_path, population);
+    export_to_json(params.export_path, population);
     return population;
 }
 
-void Analyzer::export_to_csv(const ::std::string& path, const ::std::vector<LayoutResult>& results) {
-    ::std::ofstream file(path);
-    file << "Rank,Alphabet_Size,Feasibility_Rate,Transducers_JSON\n";
-    for (size_t i = 0; i < results.size(); ++i) {
-        file << (i+1) << "," << results[i].alphabet_size << "," << results[i].feasibility_rate << ",\"";
-        file << "[";
-        for (size_t j = 0; j < results[i].best_layout.size(); ++j) {
-            file << "{\"x\":" << results[i].best_layout[j].x << ",\"y\":" << results[i].best_layout[j].y << "}";
-            if (j < results[i].best_layout.size() - 1) file << ",";
+void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<LayoutResult>& results) {
+    nlohmann::json root = nlohmann::json::array();
+    for (const auto& res : results) {
+        nlohmann::json symbol = nlohmann::json::array();
+        for (size_t i = 0; i < res.best_layout.size(); ++i) {
+            const auto& t = res.best_layout[i];
+            nlohmann::json entry;
+            entry["base_volume"] = 1.0;
+            entry["channel"] = static_cast<int>(i);
+            entry["frequency_hz"] = t.frequency.value_or(0.0);
+            entry["phase_deg"] = t.phase_rad * 180.0 / M_PI;
+            entry["amplitude"] = t.amplitude;
+            entry["x"] = t.x;
+            entry["y"] = t.y;
+            symbol.push_back(entry);
         }
-        file << "]\"\n";
+        root.push_back(symbol);
+    }
+    ::std::ofstream file(path);
+    if (file.is_open()) {
+        file << root.dump(4);
     }
 }
 
 ::std::vector<LayoutResult> Analyzer::run_sensitivity_sweep(const SimulationContext& base_ctx) {
     ::std::vector<LayoutResult> results;
-    (void)base_ctx;
+    SimulationContext eval_ctx = base_ctx;
+
+    for (int n = 1; n <= 10; ++n) {
+        for (int m = 1; m <= 10; ++m) {
+            double theoretical_f = physics_->calculate_mode_frequency(n, m, eval_ctx);
+            
+            double best_f = theoretical_f;
+            double max_val = 0.0;
+            
+            // Sweep around theoretical +/- 5% to find peak resonance
+            for (int i = 0; i <= 20; ++i) {
+                double f = theoretical_f * (0.95 + 0.1 * i / 20.0);
+                Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
+                double peak = resp.array().abs().maxCoeff();
+                if (peak > max_val) {
+                    max_val = peak;
+                    best_f = f;
+                }
+            }
+            
+            double freq = best_f;
+            ::std::vector<double> phases = physics_->snipe_phases(n, m, eval_ctx);
+            for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
+                eval_ctx.transducers[i].phase_rad = phases[i];
+                eval_ctx.transducers[i].frequency = freq;
+                eval_ctx.transducers[i].amplitude = 25.0; // Start at max for validation
+            }
+
+            if (!physics_->validate_power(freq, eval_ctx)) continue;
+
+            // Binary search for minimum amplitude
+            double low = 0.0, high = 25.0, best_amp = 25.0;
+            for (int iter = 0; iter < 10; ++iter) {
+                double mid = (low + high) / 2.0;
+                for (auto& t : eval_ctx.transducers) t.amplitude = mid;
+                if (physics_->validate_power(freq, eval_ctx)) {
+                    high = mid;
+                    best_amp = mid;
+                } else {
+                    low = mid;
+                }
+            }
+            for (auto& t : eval_ctx.transducers) t.amplitude = best_amp;
+
+            LayoutResult res;
+            res.best_layout = eval_ctx.transducers;
+            res.alphabet_size = 1;
+            res.layout_type = "Mode_" + ::std::to_string(n) + "_" + ::std::to_string(m);
+            results.push_back(res);
+        }
+    }
+    
+    ::std::sort(results.begin(), results.end(), [](const LayoutResult& a, const LayoutResult& b) {
+        return a.best_layout[0].frequency.value_or(0.0) < b.best_layout[0].frequency.value_or(0.0);
+    });
+
     return results;
 }
 

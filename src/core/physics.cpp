@@ -234,7 +234,7 @@ bool PhysicsEngine::validate_power(double frequency, const SimulationContext& ct
 }
 
 void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx) {
-    double margin = 0.03;
+    double margin = 0.0;
     if (ctx.geometry == Geometry::kCircular) {
         double R = ctx.lx / 2.0 - margin;
         double r = ::std::sqrt(t.x*t.x + t.y*t.y);

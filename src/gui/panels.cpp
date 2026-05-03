@@ -69,6 +69,12 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
         ImGui::SameLine();
         if (ImGui::Button("4-Corners")) app->apply_preset("4-corners");
         
+        int t_count = static_cast<int>(ctx.transducers.size());
+        if (ImGui::SliderInt("Count", &t_count, 1, 4)) {
+            while (ctx.transducers.size() < (size_t)t_count) ctx.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
+            while (ctx.transducers.size() > (size_t)t_count) ctx.transducers.pop_back();
+        }
+
         for (size_t i = 0; i < ctx.transducers.size(); ++i) {
             ::std::string label = "T" + ::std::to_string(i+1);
             if (ImGui::TreeNode(label.c_str())) {
@@ -94,32 +100,78 @@ void Panels::draw_stage2_ga(SimulationContext& ctx, Analyzer& analyzer) {
     static GAParams params;
     ImGui::InputInt("Population", &params.population_size);
     ImGui::InputInt("Generations", &params.generations);
-    ImGui::SliderInt("Transducers", &params.transducer_count, 4, 6);
+    ImGui::SliderInt("Transducers", &params.transducer_count, 1, 4);
     
-    static char path[256] = "ga_optimal_layouts.csv";
+    static char path[256] = "ga_optimal_layouts.json";
     ImGui::InputText("Export Path", path, 256);
     params.export_path = path;
 
+    static ::std::vector<LayoutResult> top_layouts;
     if (ImGui::Button("Run Genetic Algorithm Optimization")) {
-        analyzer.run_genetic_algorithm(ctx, params);
+        top_layouts = analyzer.run_genetic_algorithm(ctx, params);
+        if (top_layouts.size() > 3) top_layouts.resize(3);
+    }
+
+    if (!top_layouts.empty()) {
+        ImGui::Separator();
+        ImGui::Text("Top 3 Discovered Layouts:");
+        for (size_t i = 0; i < top_layouts.size(); ++i) {
+            ::std::string label = "Layout #" + ::std::to_string(i+1) + " (Alphabet: " + ::std::to_string(top_layouts[i].alphabet_size) + ")";
+            if (ImGui::Selectable(label.c_str())) {
+                // Preview logic could go here
+            }
+            ImGui::SameLine();
+            ::std::string btn_label = "Lock In Layout ##" + ::std::to_string(i);
+            if (ImGui::Button(btn_label.c_str())) {
+                ctx.transducers = top_layouts[i].best_layout;
+                // Advancement to Stage 3 is implicit by user clicking the tab, 
+                // but we've locked the coordinates.
+            }
+        }
     }
 }
 
 void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
-    ImGui::Text("Exhaustive Sensitivity Analysis");
-    ImGui::BulletText("Sweep Phases: 0, 90, 180, 270");
-    ImGui::BulletText("Sweep Power: 10W, 15W, 20W, 25W");
+    ImGui::Text("Frequency Sensitivity Sweep");
+    ImGui::Text("Layout locked with %d transducers.", (int)ctx.transducers.size());
     
-    if (ImGui::Button("Run Exhaustive Parameter Sweep")) {
-        analyzer.run_sensitivity_sweep(ctx);
+    static ::std::vector<LayoutResult> sweep_results;
+    if (ImGui::Button("Run Sensitivity Sweep")) {
+        sweep_results = analyzer.run_sensitivity_sweep(ctx);
+    }
+
+    if (!sweep_results.empty()) {
+        if (ImGui::Button("Export master_symbols.json")) {
+            analyzer.export_to_json("master_symbols.json", sweep_results);
+        }
+
+        if (ImGui::BeginTable("SweepResults", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+            ImGui::TableSetupColumn("Mode");
+            ImGui::TableSetupColumn("Freq (Hz)");
+            ImGui::TableSetupColumn("Amp (W)");
+            ImGui::TableSetupColumn("Action");
+            ImGui::TableHeadersRow();
+
+            for (auto& res : sweep_results) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("%s", res.layout_type.c_str());
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("%.1f", res.best_layout[0].frequency.value_or(0.0));
+                ImGui::TableSetColumnIndex(2);
+                ImGui::Text("%.2f", res.best_layout[0].amplitude);
+                ImGui::TableSetColumnIndex(3);
+                if (ImGui::Button(("Apply##" + res.layout_type).c_str())) {
+                    ctx.transducers = res.best_layout;
+                }
+            }
+            ImGui::EndTable();
+        }
     }
 }
 
 void Panels::draw_stage4_batch(SimulationContext& ctx, Application* app, bool& is_batch_running, float& batch_progress, ::std::string& batch_status) {
     ImGui::Text("Automated Plotting Suite");
-    
-    static char csv_path[256] = "true_alphabet_modes.csv";
-    ImGui::InputText("Input CSV", csv_path, 256);
     
     static char out_dir[256] = "./output_images";
     ImGui::InputText("Output Dir", out_dir, 256);
@@ -128,8 +180,10 @@ void Panels::draw_stage4_batch(SimulationContext& ctx, Application* app, bool& i
         ImGui::Text("Status: %s", batch_status.c_str());
         ImGui::ProgressBar(batch_progress, ImVec2(-1, 0));
     } else {
-        if (ImGui::Button("Start Batch Generation")) {
-            app->start_batch_plotting(csv_path, out_dir);
+        if (ImGui::Button("Render from master_symbols.json")) {
+            // We need a way to trigger batch plotting from JSON.
+            // I'll update Application::start_batch_plotting to handle JSON.
+            app->start_batch_plotting("master_symbols.json", out_dir);
         }
     }
 }

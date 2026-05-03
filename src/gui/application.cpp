@@ -12,6 +12,7 @@
 #include <cmath>
 #include <filesystem>
 #include <cstring>
+#include <fstream>
 
 // OpenGL
 #include <GLFW/glfw3.h>
@@ -21,8 +22,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
-
-#include "utils/csv_parser.h"
 
 // Vertex Shader for 3D Surface
 const char* vertexShaderSource = R"(
@@ -57,10 +56,10 @@ Application::Application(const ::std::string& title, int width, int height)
   physics_ = ::std::make_shared<PhysicsEngine>(200);
   analyzer_ = ::std::make_shared<Analyzer>(physics_);
 
-  // Default context
-  ctx_.geometry = Geometry::kSquare;
+  // Default context (SWAID Hardware Defaults)
+  ctx_.geometry = Geometry::kRectangular;
   ctx_.lx = 0.30;
-  ctx_.ly = 0.30;
+  ctx_.ly = 0.20;
   ctx_.h = 0.0015;
   ctx_.e = 69e9;
   ctx_.rho = 2700.0;
@@ -69,7 +68,11 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.n_modes = 10;
   ctx_.sign = 1;
   ctx_.speaker = {};
-  ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
+  
+  // Default to 4 transducers
+  for (int i = 0; i < 4; ++i) {
+    ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
+  }
 }
 
 Application::~Application() {
@@ -251,8 +254,6 @@ void Application::shutdown() {
 
 void Application::update_texture() {
   physics_->compute_visuals(static_cast<double>(current_freq_), ctx_, current_sand_, current_deformation_);
-  // update_3d_mesh();
-  // draw_3d_mesh();
 
   ::std::vector<unsigned char> data(200 * 200 * 4);
   for (int i = 0; i < 200; ++i) {
@@ -310,15 +311,35 @@ void Application::render_ui() {
 void Application::render_viewport() {
   ImGui::Begin("Plate Viewport");
   if (ImPlot::BeginPlot("##PlatePlot", ImVec2(-1, -1), ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
-      double x_min = -ctx_.lx / 2.0, x_max = ctx_.lx / 2.0, y_min = -ctx_.ly / 2.0, y_max = ctx_.ly / 2.0;
+      double x_min = -ctx_.lx / 2.0, x_max = ctx_.lx / 2.0;
+      double y_min = -(ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+      double y_max = (ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+      
       ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
       ImPlot::SetupAxesLimits(x_min * 1.1, x_max * 1.1, y_min * 1.1, y_max * 1.1);
       ImPlot::PlotImage("Plate", (void*)(intptr_t)plate_texture_, ImPlotPoint(x_min, y_min), ImPlotPoint(x_max, y_max));
       for (size_t i = 0; i < ctx_.transducers.size(); ++i) {
           ::std::string id = "T" + ::std::to_string(i + 1);
           if (ImPlot::DragPoint(static_cast<int>(i), &ctx_.transducers[i].x, &ctx_.transducers[i].y, ImVec4(1, 0.5, 0, 1), 4)) {
-              ctx_.transducers[i].x = ::std::clamp(ctx_.transducers[i].x, x_min, x_max); ctx_.transducers[i].y = ::std::clamp(ctx_.transducers[i].y, y_min, y_max);
+              physics_->clamp_transducer(ctx_.transducers[i], ctx_);
           }
+          // Draw mechanical clearance boundary (50mm radius)
+          static double circle_x[64], circle_y[64];
+          static bool circle_init = false;
+          if (!circle_init) {
+              for (int j = 0; j < 64; ++j) {
+                  double a = 2.0 * 3.14159 * j / 63.0;
+                  circle_x[j] = ::std::cos(a);
+                  circle_y[j] = ::std::sin(a);
+              }
+              circle_init = true;
+          }
+          double draw_x[64], draw_y[64];
+          for (int j = 0; j < 64; ++j) {
+              draw_x[j] = ctx_.transducers[i].x + 0.05 * circle_x[j];
+              draw_y[j] = ctx_.transducers[i].y + 0.05 * circle_y[j];
+          }
+          ImPlot::PlotLine("Clearance", draw_x, draw_y, 64);
           ImPlot::Annotation(ctx_.transducers[i].x, ctx_.transducers[i].y, ImVec4(0,0,0,0), ImVec2(10, -10), true, "%s", id.c_str());
       }
       if (show_particles_) {
@@ -363,17 +384,14 @@ void Application::snap_to_resonance(int direction) {
 
 void Application::apply_preset(const ::std::string& name) {
     ctx_.transducers.clear();
-    if (name == "1-center") ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
-    else if (name == "4-corners") {
+    if (name == "1-center") {
+        ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
+    } else if (name == "4-corners") {
         double d = 0.35 * ctx_.lx;
-        ctx_.transducers.push_back({d, d, 1.0, 0.0, ::std::nullopt}); ctx_.transducers.push_back({-d, d, 1.0, 3.14159, ::std::nullopt});
-        ctx_.transducers.push_back({-d, -d, 1.0, 0.0, ::std::nullopt}); ctx_.transducers.push_back({d, -d, 1.0, 3.14159, ::std::nullopt});
-    } else if (name == "8-ring") {
-        double r = 0.3 * ctx_.lx;
-        for (int i = 0; i < 8; ++i) {
-            double angle = (float)i * 3.14159f / 4.0f;
-            ctx_.transducers.push_back({r * ::std::cos(angle), r * ::std::sin(angle), 1.0, (i % 2 == 0 ? 0.0 : 3.14159), ::std::nullopt});
-        }
+        ctx_.transducers.push_back({d, d, 1.0, 0.0, ::std::nullopt});
+        ctx_.transducers.push_back({-d, d, 1.0, 3.14159, ::std::nullopt});
+        ctx_.transducers.push_back({-d, -d, 1.0, 0.0, ::std::nullopt});
+        ctx_.transducers.push_back({d, -d, 1.0, 3.14159, ::std::nullopt});
     }
 }
 
@@ -388,20 +406,50 @@ void Application::save_screenshot(const ::std::string& filename) {
     stbi_write_png(filename.c_str(), width_, height_, 3, flipped.data(), width_ * 3);
 }
 
-void Application::start_batch_plotting(const ::std::string& csv_path, const ::std::string& output_dir) {
+void Application::start_batch_plotting(const ::std::string& json_path, const ::std::string& output_dir) {
     if (is_batch_running_) return;
-    ::std::vector<BatchRow> data = CSVParser::parse_batch_csv(csv_path);
-    if (data.empty()) { batch_status_ = "Error: CSV empty or not found."; return; }
+    
+    ::std::ifstream file(json_path);
+    if (!file.is_open()) { batch_status_ = "Error: JSON not found."; return; }
+    
+    nlohmann::json root;
+    try {
+        file >> root;
+    } catch (...) {
+        batch_status_ = "Error: JSON parse failed.";
+        return;
+    }
+
+    if (!root.is_array()) { batch_status_ = "Error: JSON is not an array."; return; }
+
     ::std::filesystem::create_directories(output_dir);
     is_batch_running_ = true;
-    for (size_t i = 0; i < data.size(); ++i) {
-        batch_progress_ = (float)i / data.size();
-        ctx_.transducers = data[i].layout;
-        current_freq_ = (float)data[i].frequency;
+    
+    for (size_t i = 0; i < root.size(); ++i) {
+        batch_progress_ = (float)i / root.size();
+        
+        if (!root[i].is_array() || root[i].empty()) continue;
+
+        // Populate layout from JSON
+        ctx_.transducers.clear();
+        double freq = 0.0;
+        for (const auto& entry : root[i]) {
+            Transducer t;
+            t.x = entry.value("x", 0.0);
+            t.y = entry.value("y", 0.0);
+            t.amplitude = entry.value("amplitude", 0.0);
+            t.phase_rad = entry.value("phase_deg", 0.0) * 3.14159 / 180.0;
+            freq = entry.value("frequency_hz", 0.0);
+            t.frequency = freq;
+            ctx_.transducers.push_back(t);
+        }
+        
+        current_freq_ = static_cast<float>(freq);
         update_texture();
-        ::std::string filename = output_dir + "/mode_" + ::std::to_string(data[i].mode_id) + "_" + ::std::to_string((int)current_freq_) + "Hz.png";
+        ::std::string filename = output_dir + "/symbol_" + ::std::to_string(i) + "_" + ::std::to_string((int)current_freq_) + "Hz.png";
         save_screenshot(filename);
     }
+    
     is_batch_running_ = false;
     batch_status_ = "Batch Complete.";
 }
