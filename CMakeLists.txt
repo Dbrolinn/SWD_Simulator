@@ -18,7 +18,6 @@ find_package(Threads REQUIRED)
 
 # Global Defines for OpenGL Loading (Linux/X11)
 add_definitions(-DGL_GLEXT_PROTOTYPES)
-add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_CUSTOM="gui/gl_custom_loader.h")
 
 # ── Third Party ──────────────────────────────────────────────────────────────
 
