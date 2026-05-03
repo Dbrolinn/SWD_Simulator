@@ -51,9 +51,17 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
         if (ImGui::Combo("Geometry", &current, items, 3)) {
             ctx.geometry = (Geometry)current;
         }
-        ImGui::InputDouble("Lx (m)", &ctx.lx);
-        if (ctx.geometry == Geometry::kRectangular) ImGui::InputDouble("Ly (m)", &ctx.ly);
-        ImGui::InputDouble("Thickness (m)", &ctx.h);
+        
+        double lx_mm = ctx.lx * 1000.0;
+        if (ImGui::InputDouble("Lx (mm)", &lx_mm)) ctx.lx = lx_mm / 1000.0;
+        
+        if (ctx.geometry == Geometry::kRectangular) {
+            double ly_mm = ctx.ly * 1000.0;
+            if (ImGui::InputDouble("Ly (mm)", &ly_mm)) ctx.ly = ly_mm / 1000.0;
+        }
+        
+        double h_mm = ctx.h * 1000.0;
+        if (ImGui::InputDouble("Thickness (mm)", &h_mm)) ctx.h = h_mm / 1000.0;
     }
 
     if (ImGui::CollapsingHeader("Simulation Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -79,14 +87,21 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
             ::std::string label = "T" + ::std::to_string(i+1);
             if (ImGui::TreeNode(label.c_str())) {
                 bool changed = false;
-                changed |= ImGui::InputDouble("X", &ctx.transducers[i].x);
-                changed |= ImGui::InputDouble("Y", &ctx.transducers[i].y);
+                double tx_mm = ctx.transducers[i].x * 1000.0;
+                double ty_mm = ctx.transducers[i].y * 1000.0;
+                
+                if (ImGui::InputDouble("X (mm)", &tx_mm)) { ctx.transducers[i].x = tx_mm / 1000.0; changed = true; }
+                if (ImGui::InputDouble("Y (mm)", &ty_mm)) { ctx.transducers[i].y = ty_mm / 1000.0; changed = true; }
                 
                 double min_p = 0.0, max_p = 25.0;
                 ImGui::SliderScalar("Power (W)", ImGuiDataType_Double, &ctx.transducers[i].amplitude, &min_p, &max_p);
+                ImGui::InputDouble("Power (W) ##Text", &ctx.transducers[i].amplitude);
+                ctx.transducers[i].amplitude = ::std::clamp(ctx.transducers[i].amplitude, 0.0, 25.0);
                 
                 float deg = (float)(ctx.transducers[i].phase_rad * 180.0 / M_PI);
                 if (ImGui::SliderFloat("Phase (°)", &deg, 0, 360)) ctx.transducers[i].phase_rad = (double)deg * M_PI / 180.0;
+                double deg_d = (double)deg;
+                if (ImGui::InputDouble("Phase (°) ##Text", &deg_d)) ctx.transducers[i].phase_rad = deg_d * M_PI / 180.0;
                 
                 if (changed) app->get_physics()->clamp_transducer(ctx.transducers[i], ctx);
                 
@@ -191,7 +206,7 @@ void Panels::draw_stage4_batch(SimulationContext& ctx, Application* app, bool& i
 void Panels::draw_material_selector(SimulationContext& ctx) {
     if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
         static const char* materials[] = { "Aluminium", "Steel", "Brass", "Glass" };
-        static int current_mat = 0;
+        static int current_mat = 1;
         if (ImGui::Combo("Preset", &current_mat, materials, 4)) {
             if (current_mat == 0) { ctx.e = 69e9; ctx.rho = 2700.0; ctx.nu = 0.33; }
             else if (current_mat == 1) { ctx.e = 193e9; ctx.rho = 8000.0; ctx.nu = 0.29; }

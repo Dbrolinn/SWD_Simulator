@@ -23,6 +23,9 @@
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 // Vertex Shader for 3D Surface
 const char* vertexShaderSource = R"(
     #version 330 core
@@ -60,10 +63,10 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.geometry = Geometry::kRectangular;
   ctx_.lx = 0.30;
   ctx_.ly = 0.20;
-  ctx_.h = 0.0015;
-  ctx_.e = 69e9;
-  ctx_.rho = 2700.0;
-  ctx_.nu = 0.33;
+  ctx_.h = 0.0010;
+  ctx_.e = 193e9; // Steel
+  ctx_.rho = 8000.0;
+  ctx_.nu = 0.29;
   ctx_.damping = 0.005;
   ctx_.n_modes = 10;
   ctx_.sign = 1;
@@ -387,16 +390,14 @@ void Application::apply_preset(const ::std::string& name) {
     if (name == "1-center") {
         ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
     } else if (name == "4-corners") {
-        double d = 0.35 * ctx_.lx;
-        ctx_.transducers.push_back({d, d, 1.0, 0.0, ::std::nullopt});
-        ctx_.transducers.push_back({-d, d, 1.0, 3.14159, ::std::nullopt});
-        ctx_.transducers.push_back({-d, -d, 1.0, 0.0, ::std::nullopt});
-        ctx_.transducers.push_back({d, -d, 1.0, 3.14159, ::std::nullopt});
+        double dx = 0.45 * ctx_.lx;
+        double dy = 0.45 * ctx_.ly;
+        ctx_.transducers.push_back({dx, dy, 1.0, 0.0, ::std::nullopt});
+        ctx_.transducers.push_back({-dx, dy, 1.0, 3.14159, ::std::nullopt});
+        ctx_.transducers.push_back({-dx, -dy, 1.0, 0.0, ::std::nullopt});
+        ctx_.transducers.push_back({dx, -dy, 1.0, 3.14159, ::std::nullopt});
     }
 }
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
 void Application::save_screenshot(const ::std::string& filename) {
     ::std::vector<unsigned char> pixels(width_ * height_ * 3);
@@ -455,3 +456,4 @@ void Application::start_batch_plotting(const ::std::string& json_path, const ::s
 }
 
 } // namespace chladni
+

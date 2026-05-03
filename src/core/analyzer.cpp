@@ -11,6 +11,10 @@
 #include <random>
 #include <Eigen/Dense>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace chladni {
 
 Analyzer::Analyzer(::std::shared_ptr<PhysicsEngine> physics) : physics_(physics) {}
@@ -94,6 +98,8 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
             // Binary search for minimum amplitude (0.0 to 25.0 Watts) required for 1G
             double low = 0.0, high = 25.0, best_amp = 25.0;
             if (!physics_->validate_power(freq, eval_ctx)) continue;
+            
+            feasible_count++;
 
             for (int iter = 0; iter < 10; ++iter) {
                 double mid = (low + high) / 2.0;

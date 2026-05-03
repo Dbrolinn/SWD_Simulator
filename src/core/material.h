@@ -15,7 +15,7 @@ namespace chladni {
  * @brief Material preset for real metal sheets available on the market.
  */
 struct MaterialSpec {
-  std::string name;
+  ::std::string name;
   double e;           ///< Young's Modulus (Pa)
   double rho;         ///< Density (kg/m^3)
   double nu;          ///< Poisson's Ratio
@@ -23,8 +23,8 @@ struct MaterialSpec {
     int w_mm;
     int h_mm;
   };
-  std::vector<Size> sizes_mm;
-  std::vector<double> thicknesses_mm;
+  ::std::vector<Size> sizes_mm;
+  ::std::vector<double> thicknesses_mm;
 };
 
 /**
