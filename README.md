@@ -22,9 +22,46 @@ This simulator transitions from a theoretical sandbox into a strict calibration 
 
 ## Build Requirements
 
-- **C++17** compatible compiler.
+- **C++17** compatible compiler (e.g., GCC 9+, Clang 10+).
 - **Eigen3**
 - **nlohmann/json**
-- **GLFW 3.3+**
-- **OpenGL 3.3+**
-- **Dear ImGui & ImPlot** (Included in `third_party/`)
+- **Git** (for fetching dependencies)
+- **CMake 3.10+**
+
+## Installation
+
+Since third-party libraries and build artifacts are not committed to the repository, you must run the setup script first:
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository_url>
+   cd SWD_Simulator
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   ./setup_dependencies.sh
+   ```
+   This script fetches **GLFW**, **Dear ImGui (docking)**, **ImPlot**, and **STB** into the `third_party` directory and prepares the `build` folder.
+
+## Build & Run Guide
+
+Follow these commands to compile the project and start the application:
+
+### 1. Compile the Project
+Navigate to the build directory and use CMake to generate the build files, then compile using `make`:
+```bash
+cd build
+cmake ..
+make
+```
+
+### 2. Run the Application
+Once the build is complete, execute the simulator from the `build` directory:
+```bash
+./chladni_sim
+```
+
+---
+**Note:** Ensure you have the system-level requirements (GCC/Clang, Eigen3, and nlohmann/json) installed before building. On Debian/Ubuntu, you can install the core dependencies with:
+`sudo apt install libeigen3-dev nlohmann-json3-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev`
