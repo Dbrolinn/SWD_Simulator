@@ -46,6 +46,7 @@ class Application {
 
   void render_ui();
   void render_viewport();
+  void render_pure_viewport(const nlohmann::json& symbol);
   void render_panels();
   void render_3d_viewport();
   void render_sweeper_tab();
@@ -56,6 +57,9 @@ class Application {
   bool is_batch_running_ = false;
   float batch_progress_ = 0.0f;
   ::std::string batch_status_ = "Idle";
+  nlohmann::json batch_data_;
+  size_t batch_current_idx_ = 0;
+  ::std::string batch_output_dir_;
   
   GLFWwindow* window_;
   ::std::string title_;

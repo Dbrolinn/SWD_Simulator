@@ -25,8 +25,8 @@ void Panels::draw_main_ui(SimulationContext& ctx, Application* app, Analyzer& an
             draw_stage1_manual(ctx, app, current_freq, f_max);
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Stage 2: GA Optimizer")) {
-            draw_stage2_ga(ctx, analyzer);
+        if (ImGui::BeginTabItem("Stage 2: Symmetric Explorer")) {
+            draw_stage2_grid(ctx, analyzer);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Stage 3: Variable Sweep")) {
@@ -72,6 +72,12 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
         if (ImGui::Button("Next Peak")) app->snap_to_resonance(1);
     }
 
+    if (ImGui::CollapsingHeader("SiniLink Amplifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
+        double min_v = 0.0, max_v = 1.0;
+        ImGui::SliderScalar("Amp 1 Gain", ImGuiDataType_Double, &ctx.base_volume_1, &min_v, &max_v);
+        ImGui::SliderScalar("Amp 2 Gain", ImGuiDataType_Double, &ctx.base_volume_2, &min_v, &max_v);
+    }
+
     if (ImGui::CollapsingHeader("Transducers", ImGuiTreeNodeFlags_DefaultOpen)) {
         if (ImGui::Button("1-Center")) app->apply_preset("1-center");
         ImGui::SameLine();
@@ -93,10 +99,10 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
                 if (ImGui::InputDouble("X (mm)", &tx_mm)) { ctx.transducers[i].x = tx_mm / 1000.0; changed = true; }
                 if (ImGui::InputDouble("Y (mm)", &ty_mm)) { ctx.transducers[i].y = ty_mm / 1000.0; changed = true; }
                 
-                double min_p = 0.0, max_p = 25.0;
-                ImGui::SliderScalar("Power (W)", ImGuiDataType_Double, &ctx.transducers[i].amplitude, &min_p, &max_p);
-                ImGui::InputDouble("Power (W) ##Text", &ctx.transducers[i].amplitude);
-                ctx.transducers[i].amplitude = ::std::clamp(ctx.transducers[i].amplitude, 0.0, 25.0);
+                double min_p = 0.0, max_p = 1.0;
+                ImGui::SliderScalar("Digital Amp", ImGuiDataType_Double, &ctx.transducers[i].amplitude, &min_p, &max_p);
+                ImGui::InputDouble("Digital Amp ##Text", &ctx.transducers[i].amplitude);
+                ctx.transducers[i].amplitude = ::std::clamp(ctx.transducers[i].amplitude, 0.0, 1.0);
                 
                 float deg = (float)(ctx.transducers[i].phase_rad * 180.0 / M_PI);
                 if (ImGui::SliderFloat("Phase (°)", &deg, 0, 360)) ctx.transducers[i].phase_rad = (double)deg * M_PI / 180.0;
@@ -111,36 +117,64 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
     }
 }
 
-void Panels::draw_stage2_ga(SimulationContext& ctx, Analyzer& analyzer) {
-    static GAParams params;
-    ImGui::InputInt("Population", &params.population_size);
-    ImGui::InputInt("Generations", &params.generations);
-    ImGui::SliderInt("Transducers", &params.transducer_count, 1, 4);
-    
-    static char path[256] = "ga_optimal_layouts.json";
-    ImGui::InputText("Export Path", path, 256);
-    params.export_path = path;
-
+void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer) {
+    static GridParams params;
     static ::std::vector<LayoutResult> top_layouts;
-    if (ImGui::Button("Run Genetic Algorithm Optimization")) {
-        top_layouts = analyzer.run_genetic_algorithm(ctx, params);
-        if (top_layouts.size() > 3) top_layouts.resize(3);
+    static ::std::future<::std::vector<LayoutResult>> grid_future;
+    static bool is_running = false;
+
+    double lx = ctx.lx;
+    double ly = (ctx.geometry == Geometry::kCircular) ? ctx.lx : ctx.ly;
+    double dx_start = 0.025, dx_end = lx / 2.0 - params.edge_gap_m;
+    double dy_start = 0.025, dy_end = ly / 2.0 - params.edge_gap_m;
+    
+    int nx = (dx_end < dx_start) ? 0 : static_cast<int>((dx_end - dx_start)/params.step_size_m + 1);
+    int ny = (dy_end < dy_start) ? 0 : static_cast<int>((dy_end - dy_start)/params.step_size_m + 1);
+    int total_iterations = nx * ny;
+
+    if (ImGui::CollapsingHeader("Explorer Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
+        double step_mm = params.step_size_m * 1000.0;
+        if (ImGui::InputDouble("Step Size (mm)", &step_mm)) params.step_size_m = ::std::max(1.0, step_mm) / 1000.0;
+        
+        double gap_mm = params.edge_gap_m * 1000.0;
+        if (ImGui::InputDouble("Edge Gap (mm)", &gap_mm)) params.edge_gap_m = ::std::max(0.0, gap_mm) / 1000.0;
+        
+        ImGui::Text("Estimated Iterations: %d (%d x %d grid)", total_iterations, nx, ny);
+    }
+
+    if (is_running) {
+        if (grid_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
+            top_layouts = grid_future.get();
+            is_running = false;
+        }
+        char overlay[128];
+        ::std::snprintf(overlay, sizeof(overlay), "Best Alphabet: %d", analyzer.get_grid_best_alphabet());
+        ImGui::ProgressBar(analyzer.get_grid_progress(), ImVec2(-1, 0), overlay);
+        if (ImGui::Button("Cancel Search", ImVec2(-1, 0))) {
+            is_running = false; 
+        }
+    } else {
+        if (ImGui::Button("Run Symmetric Grid Search", ImVec2(-1, 40))) {
+            GridParams p = params;
+            grid_future = ::std::async(::std::launch::async, [&analyzer, ctx, p]() {
+                return analyzer.run_symmetric_grid_search(ctx, p);
+            });
+            is_running = true;
+        }
     }
 
     if (!top_layouts.empty()) {
         ImGui::Separator();
-        ImGui::Text("Top 3 Discovered Layouts:");
+        ImGui::Text("Top Discovered Symmetric Layouts:");
         for (size_t i = 0; i < top_layouts.size(); ++i) {
-            ::std::string label = "Layout #" + ::std::to_string(i+1) + " (Alphabet: " + ::std::to_string(top_layouts[i].alphabet_size) + ")";
-            if (ImGui::Selectable(label.c_str())) {
-                // Preview logic could go here
+            ImGui::Text("Layout #%d (Alphabet: %d)", (int)i+1, top_layouts[i].alphabet_size);
+            ImGui::SameLine();
+            if (ImGui::Button(("Preview on Plate##" + ::std::to_string(i)).c_str())) {
+                ctx.transducers = top_layouts[i].best_layout;
             }
             ImGui::SameLine();
-            ::std::string btn_label = "Lock In Layout ##" + ::std::to_string(i);
-            if (ImGui::Button(btn_label.c_str())) {
+            if (ImGui::Button(("Lock In Layout##" + ::std::to_string(i)).c_str())) {
                 ctx.transducers = top_layouts[i].best_layout;
-                // Advancement to Stage 3 is implicit by user clicking the tab, 
-                // but we've locked the coordinates.
             }
         }
     }
@@ -151,13 +185,27 @@ void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
     ImGui::Text("Layout locked with %d transducers.", (int)ctx.transducers.size());
     
     static ::std::vector<LayoutResult> sweep_results;
-    if (ImGui::Button("Run Sensitivity Sweep")) {
-        sweep_results = analyzer.run_sensitivity_sweep(ctx);
+    static ::std::future<::std::vector<LayoutResult>> sweep_future;
+    static bool is_sweeping = false;
+
+    if (is_sweeping) {
+        if (sweep_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
+            sweep_results = sweep_future.get();
+            is_sweeping = false;
+        }
+        ImGui::ProgressBar(analyzer.get_sweep_progress(), ImVec2(-1, 0), "Sweeping Modes...");
+    } else {
+        if (ImGui::Button("Run Sensitivity Sweep", ImVec2(-1, 40))) {
+            sweep_future = ::std::async(::std::launch::async, [&analyzer, ctx]() {
+                return analyzer.run_sensitivity_sweep(ctx);
+            });
+            is_sweeping = true;
+        }
     }
 
     if (!sweep_results.empty()) {
-        if (ImGui::Button("Export master_symbols.json")) {
-            analyzer.export_to_json("master_symbols.json", sweep_results);
+        if (ImGui::Button("Export master_symbols.json", ImVec2(-1, 40))) {
+            analyzer.export_to_json("../master_symbols.json", sweep_results, ctx);
         }
 
         if (ImGui::BeginTable("SweepResults", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
@@ -186,19 +234,15 @@ void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
 }
 
 void Panels::draw_stage4_batch(SimulationContext& ctx, Application* app, bool& is_batch_running, float& batch_progress, ::std::string& batch_status) {
+    (void)ctx;
     ImGui::Text("Automated Plotting Suite");
     
-    static char out_dir[256] = "./output_images";
-    ImGui::InputText("Output Dir", out_dir, 256);
-
     if (is_batch_running) {
         ImGui::Text("Status: %s", batch_status.c_str());
         ImGui::ProgressBar(batch_progress, ImVec2(-1, 0));
     } else {
-        if (ImGui::Button("Render from master_symbols.json")) {
-            // We need a way to trigger batch plotting from JSON.
-            // I'll update Application::start_batch_plotting to handle JSON.
-            app->start_batch_plotting("master_symbols.json", out_dir);
+        if (ImGui::Button("Render from master_symbols.json", ImVec2(-1, 40))) {
+            app->start_batch_plotting("../master_symbols.json", "../dictionary");
         }
     }
 }

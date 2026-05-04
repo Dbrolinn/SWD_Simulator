@@ -14,6 +14,10 @@
 #include <cstring>
 #include <fstream>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // OpenGL
 #include <GLFW/glfw3.h>
 
@@ -70,9 +74,12 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.damping = 0.005;
   ctx_.n_modes = 10;
   ctx_.sign = 1;
+  ctx_.base_volume_1 = 1.0;
+  ctx_.base_volume_2 = 1.0;
   ctx_.speaker = {};
   
-  // Default to 4 transducers
+  // Default to exactly 4 transducers
+  ctx_.transducers.clear();
   for (int i = 0; i < 4; ++i) {
     ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
   }
@@ -271,10 +278,99 @@ void Application::update_texture() {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 200, 200, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 }
 
+void Application::render_pure_viewport(const nlohmann::json& symbol) {
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2((float)width_, (float)height_));
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;
+    
+    if (ImGui::Begin("##PurePlot", nullptr, flags)) {
+        if (ImPlot::BeginPlot("##PlatePlot", ImVec2(-1, -1), ImPlotFlags_Equal | ImPlotFlags_NoLegend | ImPlotFlags_NoMouseText)) {
+            double x_min = -ctx_.lx / 2.0, x_max = ctx_.lx / 2.0;
+            double y_min = -(ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+            double y_max = (ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+            
+            ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
+            ImPlot::SetupAxesLimits(x_min * 1.1, x_max * 1.1, y_min * 1.1, y_max * 1.1);
+            ImPlot::PlotImage("Plate", (void*)(intptr_t)plate_texture_, ImPlotPoint(x_min, y_min), ImPlotPoint(x_max, y_max));
+            ImPlot::EndPlot();
+        }
+
+        // Burn metadata onto the clean image
+        char caption[512];
+        ::std::snprintf(caption, sizeof(caption), 
+            "Symbol: %s\nFreq: %.1f Hz\nAmp1: %.2f | Amp2: %.2f", 
+            symbol.value("display_name", "UNKNOWN").c_str(),
+            (double)current_freq_, ctx_.base_volume_1, ctx_.base_volume_2);
+        
+        ImGui::GetWindowDrawList()->AddText(ImVec2(20, 20), IM_COL32(255, 255, 0, 255), caption);
+    }
+    ImGui::End();
+}
+
 void Application::run() {
   if (!init()) return;
   while (!glfwWindowShouldClose(window_)) {
     glfwPollEvents();
+    
+    if (is_batch_running_) {
+        if (batch_current_idx_ < batch_data_.size()) {
+            batch_progress_ = (float)batch_current_idx_ / batch_data_.size();
+            const auto& symbol = batch_data_[batch_current_idx_];
+            
+            if (symbol.contains("hardware_config")) {
+                const auto& hw_config = symbol["hardware_config"];
+                ctx_.base_volume_1 = hw_config.value("base_volume_1", 1.0);
+                ctx_.base_volume_2 = hw_config.value("base_volume_2", 1.0);
+                
+                ctx_.transducers.clear();
+                double freq = 0.0;
+                for (const auto& entry : hw_config["channels"]) {
+                    Transducer t;
+                    t.x = entry.value("x", 0.0);
+                    t.y = entry.value("y", 0.0);
+                    t.amplitude = entry.value("amplitude", 0.0);
+                    t.phase_rad = entry.value("phase_deg", 0.0) * M_PI / 180.0;
+                    freq = entry.value("frequency_hz", 0.0);
+                    t.frequency = freq;
+                    ctx_.transducers.push_back(t);
+                }
+                current_freq_ = static_cast<float>(freq);
+                update_texture();
+
+                // PURE RENDER (No UI Panels, No Particles)
+                ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
+                
+                render_pure_viewport(symbol);
+
+                ImGui::Render();
+                
+                int dw, dh; glfwGetFramebufferSize(window_, &dw, &dh);
+                glViewport(0, 0, dw, dh); glClearColor(0.05f, 0.05f, 0.05f, 1.0f); glClear(GL_COLOR_BUFFER_BIT);
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+                // Save
+                ::std::string json_image_path = symbol["ui_metadata"].value("image_path", "");
+                ::std::string filename = (json_image_path.empty()) ? 
+                    (batch_output_dir_ + "/CHLADNI_" + ::std::to_string((int)freq) + ".png") :
+                    (".." + json_image_path.substr(1));
+
+                ::std::filesystem::path p(filename);
+                if (p.has_parent_path()) ::std::filesystem::create_directories(p.parent_path());
+                save_screenshot(filename);
+                
+                glfwSwapBuffers(window_);
+                batch_current_idx_++;
+            } else {
+                batch_current_idx_++;
+            }
+        } else {
+            is_batch_running_ = false;
+            batch_status_ = "Batch Complete.";
+            ::std::cout << "[Batch] All renders complete." << ::std::endl;
+        }
+        continue; // Skip normal UI loop during batch
+    }
+
     ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
     if (reset_particles_requested_) { physics_->init_particles(num_particles_, ctx_.lx, ctx_.ly); reset_particles_requested_ = false; }
     if (is_sweeping_) {
@@ -297,14 +393,32 @@ void Application::render_ui() {
   ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
   render_panels(); render_viewport();
   ImGui::Begin("Spectrum");
-  static ::std::vector<double> spectrum_data(500, -100.0); static ::std::vector<double> freq_axis;
-  if (freq_axis.empty()) for (int i = 0; i < 500; ++i) freq_axis.push_back(20.0 + (double)i * (f_max_limit_ - 20.0) / 500.0);
-  static double last_update_time = -1.0; double current_time = glfwGetTime();
-  if (last_update_time < 0 || current_time - last_update_time > 0.5) { spectrum_data = physics_->calculate_spectrum(20.0, f_max_limit_, 500, ctx_); last_update_time = current_time; }
+  
+  static ::std::vector<double> spectrum_data; 
+  static ::std::vector<double> freq_axis;
+  static float last_f_max = 0.0f;
+  
+  if (last_f_max != f_max_limit_ || freq_axis.empty()) {
+      freq_axis.clear();
+      for (int i = 0; i < 500; ++i) freq_axis.push_back(20.0 + (double)i * (f_max_limit_ - 20.0) / 500.0);
+      last_f_max = f_max_limit_;
+  }
+
+  static double last_update_time = -1.0; 
+  double current_time = glfwGetTime();
+  if (last_update_time < 0 || current_time - last_update_time > 0.1) { 
+      spectrum_data = physics_->calculate_spectrum(20.0, f_max_limit_, 500, ctx_); 
+      last_update_time = current_time; 
+  }
+
   if (ImPlot::BeginPlot("##ResonanceSpectrum", ImVec2(-1, -1))) {
-      ImPlot::SetupAxes("Frequency (Hz)", "dB"); ImPlot::SetupAxesLimits(20, f_max_limit_, -100, 50);
-      if (!spectrum_data.empty()) ImPlot::PlotLine("Energy", freq_axis.data(), spectrum_data.data(), 500);
-      double cur_f = (double)current_freq_; if (ImPlot::DragLineX(0, &cur_f, ImVec4(1,0,0,1))) current_freq_ = (float)cur_f;
+      ImPlot::SetupAxes("Frequency (Hz)", "dB"); 
+      ImPlot::SetupAxesLimits(20, f_max_limit_, -100, 50);
+      if (!spectrum_data.empty() && !freq_axis.empty()) {
+          ImPlot::PlotLine("Energy", freq_axis.data(), spectrum_data.data(), 500);
+      }
+      double cur_f = (double)current_freq_; 
+      if (ImPlot::DragLineX(0, &cur_f, ImVec4(1,0,0,1))) current_freq_ = (float)cur_f;
       ImPlot::EndPlot();
   }
   ImGui::End();
@@ -339,9 +453,10 @@ void Application::render_viewport() {
           }
           double draw_x[64], draw_y[64];
           for (int j = 0; j < 64; ++j) {
-              draw_x[j] = ctx_.transducers[i].x + 0.05 * circle_x[j];
-              draw_y[j] = ctx_.transducers[i].y + 0.05 * circle_y[j];
+              draw_x[j] = ctx_.transducers[i].x + 0.025 * circle_x[j];
+              draw_y[j] = ctx_.transducers[i].y + 0.025 * circle_y[j];
           }
+
           ImPlot::PlotLine("Clearance", draw_x, draw_y, 64);
           ImPlot::Annotation(ctx_.transducers[i].x, ctx_.transducers[i].y, ImVec4(0,0,0,0), ImVec2(10, -10), true, "%s", id.c_str());
       }
@@ -411,48 +526,28 @@ void Application::start_batch_plotting(const ::std::string& json_path, const ::s
     if (is_batch_running_) return;
     
     ::std::ifstream file(json_path);
-    if (!file.is_open()) { batch_status_ = "Error: JSON not found."; return; }
+    if (!file.is_open()) { 
+        ::std::cerr << "[Batch] Error: JSON not found at " << json_path << ::std::endl;
+        batch_status_ = "Error: JSON not found."; 
+        return; 
+    }
     
-    nlohmann::json root;
     try {
-        file >> root;
+        file >> batch_data_;
     } catch (...) {
         batch_status_ = "Error: JSON parse failed.";
         return;
     }
 
-    if (!root.is_array()) { batch_status_ = "Error: JSON is not an array."; return; }
-
-    ::std::filesystem::create_directories(output_dir);
-    is_batch_running_ = true;
-    
-    for (size_t i = 0; i < root.size(); ++i) {
-        batch_progress_ = (float)i / root.size();
-        
-        if (!root[i].is_array() || root[i].empty()) continue;
-
-        // Populate layout from JSON
-        ctx_.transducers.clear();
-        double freq = 0.0;
-        for (const auto& entry : root[i]) {
-            Transducer t;
-            t.x = entry.value("x", 0.0);
-            t.y = entry.value("y", 0.0);
-            t.amplitude = entry.value("amplitude", 0.0);
-            t.phase_rad = entry.value("phase_deg", 0.0) * 3.14159 / 180.0;
-            freq = entry.value("frequency_hz", 0.0);
-            t.frequency = freq;
-            ctx_.transducers.push_back(t);
-        }
-        
-        current_freq_ = static_cast<float>(freq);
-        update_texture();
-        ::std::string filename = output_dir + "/symbol_" + ::std::to_string(i) + "_" + ::std::to_string((int)current_freq_) + "Hz.png";
-        save_screenshot(filename);
+    if (!batch_data_.is_array()) { 
+        batch_status_ = "Error: JSON is not an array."; 
+        return; 
     }
-    
-    is_batch_running_ = false;
-    batch_status_ = "Batch Complete.";
+
+    ::std::cout << "[Batch] Queued render of " << batch_data_.size() << " symbols." << ::std::endl;
+    is_batch_running_ = true;
+    batch_current_idx_ = 0;
+    batch_output_dir_ = output_dir;
 }
 
 } // namespace chladni

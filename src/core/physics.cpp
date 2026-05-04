@@ -91,8 +91,14 @@ double PhysicsEngine::calculate_mode_frequency(int n, int m, const SimulationCon
 
 void PhysicsEngine::build_cache_rect(const SimulationContext& ctx) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
-  if (cache_.last_lx == ctx.lx && cache_.last_ly == ctx.ly && cache_.last_n_modes == ctx.n_modes && ctx.geometry != Geometry::kCircular) return;
-  cache_.last_lx = ctx.lx; cache_.last_ly = ctx.ly; cache_.last_n_modes = ctx.n_modes;
+  if (cache_.last_lx == ctx.lx && cache_.last_ly == ctx.ly && cache_.last_h == ctx.h &&
+      cache_.last_e == ctx.e && cache_.last_rho == ctx.rho && cache_.last_nu == ctx.nu &&
+      cache_.last_n_modes == ctx.n_modes && ctx.geometry != Geometry::kCircular) return;
+  
+  cache_.last_lx = ctx.lx; cache_.last_ly = ctx.ly; cache_.last_h = ctx.h;
+  cache_.last_e = ctx.e; cache_.last_rho = ctx.rho; cache_.last_nu = ctx.nu;
+  cache_.last_n_modes = ctx.n_modes;
+  
   bool is_square = ::std::abs(ctx.lx - ctx.ly) < 1e-9;
   double D = (ctx.e * ::std::pow(ctx.h, 3)) / (12.0 * (1.0 - ::std::pow(ctx.nu, 2)));
   cache_.ns.clear(); cache_.ms.clear();
@@ -116,8 +122,14 @@ void PhysicsEngine::build_cache_rect(const SimulationContext& ctx) {
 
 void PhysicsEngine::build_cache_circ(const SimulationContext& ctx) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
-  if (cache_.last_lx == ctx.lx && cache_.last_n_modes == ctx.n_modes && ctx.geometry == Geometry::kCircular) return;
-  cache_.last_lx = ctx.lx; cache_.last_n_modes = ctx.n_modes;
+  if (cache_.last_lx == ctx.lx && cache_.last_h == ctx.h &&
+      cache_.last_e == ctx.e && cache_.last_rho == ctx.rho && cache_.last_nu == ctx.nu &&
+      cache_.last_n_modes == ctx.n_modes && ctx.geometry == Geometry::kCircular) return;
+  
+  cache_.last_lx = ctx.lx; cache_.last_h = ctx.h;
+  cache_.last_e = ctx.e; cache_.last_rho = ctx.rho; cache_.last_nu = ctx.nu;
+  cache_.last_n_modes = ctx.n_modes;
+  
   double R = ctx.lx / 2.0; double D = (ctx.e * ::std::pow(ctx.h, 3)) / (12.0 * (1.0 - ::std::pow(ctx.nu, 2)));
   static const ::std::map<::std::pair<int, int>, double> bessel_zeros = { {{0, 1}, 2.4048}, {{0, 2}, 5.5201}, {{0, 3}, 8.6537}, {{1, 1}, 3.8317}, {{1, 2}, 7.0156}, {{1, 3}, 10.1735}, {{2, 1}, 5.1356}, {{2, 2}, 8.4172}, {{2, 3}, 11.6198}, {{3, 1}, 6.3802}, {{3, 2}, 9.7610}, {{3, 3}, 13.0152} };
   cache_.ns.clear(); cache_.ms.clear(); cache_.modes.clear();
@@ -141,7 +153,14 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
   if (ctx.geometry == Geometry::kCircular) build_cache_circ(ctx); else build_cache_rect(ctx);
   Eigen::VectorXcd F_nm = Eigen::VectorXcd::Zero(cache_.ns.size());
   double global_gain = speaker_drive_gain(frequency, ctx, true);
-  for (const auto& t : ctx.transducers) {
+  double motor_efficiency = 3.5;
+  
+  for (size_t i = 0; i < ctx.transducers.size(); ++i) {
+    const auto& t = ctx.transducers[i];
+    double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
+    double effective_power_w = 25.0 * amp_gain * t.amplitude;
+    double force_amplitude = ::std::sqrt(effective_power_w) * motor_efficiency;
+    
     Eigen::VectorXd c_nm(cache_.ns.size());
     for (size_t k = 0; k < cache_.ns.size(); ++k) {
       int n = cache_.ns[k], m = cache_.ms[k]; double val = 0.0;
@@ -152,7 +171,7 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
       } else val = transducer_coupling_single(t.x, t.y, n, m, ctx.lx, ctx.ly, ctx.sign);
       c_nm[k] = val;
     }
-    F_nm += (t.amplitude * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad))) * c_nm.cast<::std::complex<double>>();
+    F_nm += (force_amplitude * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad))) * c_nm.cast<::std::complex<double>>();
   }
   F_nm *= global_gain;
   double omega = 2.0 * M_PI * frequency; Eigen::MatrixXcd resp = Eigen::MatrixXcd::Zero(resolution_, resolution_);
@@ -178,7 +197,11 @@ bool PhysicsEngine::check_power_feasibility(double frequency, const SimulationCo
   double true_gain = speaker_drive_gain(frequency, ctx, false);
   Eigen::VectorXcd F_nm_true = Eigen::VectorXcd::Zero(cache_.ns.size());
   double motor_efficiency = 3.5;
-  for (const auto& t : ctx.transducers) {
+  for (size_t i = 0; i < ctx.transducers.size(); ++i) {
+      const auto& t = ctx.transducers[i];
+      double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
+      double effective_power_w = 25.0 * amp_gain * t.amplitude;
+      
       Eigen::VectorXd c_nm(cache_.ns.size());
       for (size_t k = 0; k < cache_.ns.size(); ++k) {
           int n = cache_.ns[k], m = cache_.ms[k]; double val = 0.0;
@@ -189,7 +212,7 @@ bool PhysicsEngine::check_power_feasibility(double frequency, const SimulationCo
           } else val = transducer_coupling_single(t.x, t.y, n, m, ctx.lx, ctx.ly, ctx.sign);
           c_nm[k] = val;
       }
-      F_nm_true += (::std::sqrt(t.amplitude) * motor_efficiency * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad))) * c_nm.cast<::std::complex<double>>();
+      F_nm_true += (::std::sqrt(effective_power_w) * motor_efficiency * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad))) * c_nm.cast<::std::complex<double>>();
   }
   F_nm_true *= true_gain;
   double omega = 2.0 * M_PI * frequency; Eigen::VectorXcd coeffs = Eigen::VectorXcd::Zero(cache_.ns.size());
@@ -203,7 +226,7 @@ bool PhysicsEngine::check_power_feasibility(double frequency, const SimulationCo
       if (peak > max_disp) max_disp = peak;
   }
   double max_accel = ::std::pow(omega, 2) * max_disp;
-  return max_accel >= 9.81;
+  return max_accel >= 98.1; // Target 10G for crisp patterns
 }
 
 bool PhysicsEngine::is_degenerate(int n, int m, const SimulationContext& ctx) {
@@ -247,15 +270,45 @@ void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx
 
 ::std::vector<double> PhysicsEngine::calculate_spectrum(double f_min, double f_max, int n_points, const SimulationContext& ctx) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
-  ::std::vector<double> spec(n_points); Eigen::VectorXd freqs = Eigen::VectorXd::LinSpaced(n_points, f_min, f_max);
+  ::std::vector<double> spec(n_points);
+  ::std::vector<double> raw_energy(n_points);
+  Eigen::VectorXd freqs = Eigen::VectorXd::LinSpaced(n_points, f_min, f_max);
   if (ctx.geometry == Geometry::kCircular) build_cache_circ(ctx); else build_cache_rect(ctx);
+  
+  // Pre-calculate modal forcing coefficients |F_k|^2
+  ::std::vector<double> F_k_sq(cache_.ns.size(), 0.0);
+  for (size_t k = 0; k < cache_.ns.size(); ++k) {
+      ::std::complex<double> F_k(0, 0);
+      for (size_t i = 0; i < ctx.transducers.size(); ++i) {
+          const auto& t = ctx.transducers[i];
+          double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
+          double force_amplitude = ::std::sqrt(25.0 * amp_gain * t.amplitude);
+          
+          double val = 0;
+          if (ctx.geometry == Geometry::kCircular) {
+              double R = ctx.lx / 2.0, r_t = ::std::sqrt(t.x*t.x + t.y*t.y), th_t = ::std::atan2(t.y, t.x);
+              static const ::std::map<::std::pair<int, int>, double> bz = { {{0, 1}, 2.4048}, {{0, 2}, 5.5201}, {{0, 3}, 8.6537}, {{1, 1}, 3.8317}, {{1, 2}, 7.0156}, {{1, 3}, 10.1735}, {{2, 1}, 5.1356}, {{2, 2}, 8.4172}, {{2, 3}, 11.6198}, {{3, 1}, 6.3802}, {{3, 2}, 9.7610}, {{3, 3}, 13.0152} };
+              if (bz.count({cache_.ns[k], cache_.ms[k]})) { double lam = bz.at({cache_.ns[k], cache_.ms[k]}); if (r_t <= R) val = ::std::cos(static_cast<double>(cache_.ns[k]) * th_t) * ::std::cyl_bessel_j(cache_.ns[k], lam * r_t / R); }
+          } else val = transducer_coupling_single(t.x, t.y, cache_.ns[k], cache_.ms[k], ctx.lx, ctx.ly, ctx.sign);
+          
+          F_k += force_amplitude * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad)) * val;
+      }
+      F_k_sq[k] = ::std::norm(F_k);
+  }
+
+  double max_energy = 1e-18;
   for (int i = 0; i < n_points; ++i) {
     double f = freqs[i], omega = 2.0 * M_PI * f, energy = 0.0;
     for (size_t k = 0; k < cache_.ns.size(); ++k) {
         double d_sq = ::std::pow(::std::pow(cache_.omega_nm[k], 2) - ::std::pow(omega, 2), 2) + ::std::pow(2.0 * ctx.damping * cache_.omega_nm[k] * omega, 2);
-        if (d_sq > 1e-18) energy += 1.0 / d_sq;
+        if (d_sq > 1e-18) energy += F_k_sq[k] / d_sq;
     }
-    spec[i] = 10.0 * ::std::log10(energy + 1e-15);
+    raw_energy[i] = energy;
+    if (energy > max_energy) max_energy = energy;
+  }
+  
+  for (int i = 0; i < n_points; ++i) {
+    spec[i] = 10.0 * ::std::log10((raw_energy[i] / max_energy) + 1e-15);
   }
   return spec;
 }
@@ -266,14 +319,18 @@ void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx
   ::std::vector<double> res_f;
   for (size_t k = 0; k < cache_.ns.size(); ++k) {
       int n = cache_.ns[k], m = cache_.ms[k]; ::std::complex<double> F_k = 0;
-      for (const auto& t : ctx.transducers) {
+      for (size_t i = 0; i < ctx.transducers.size(); ++i) {
+          const auto& t = ctx.transducers[i];
+          double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
+          double force_amplitude = ::std::sqrt(25.0 * amp_gain * t.amplitude);
+          
           double val = 0;
           if (ctx.geometry == Geometry::kCircular) {
               double R = ctx.lx / 2.0, r_t = ::std::sqrt(t.x*t.x + t.y*t.y), th_t = ::std::atan2(t.y, t.x);
               static const ::std::map<::std::pair<int, int>, double> bz = { {{0, 1}, 2.4048}, {{0, 2}, 5.5201}, {{0, 3}, 8.6537}, {{1, 1}, 3.8317}, {{1, 2}, 7.0156}, {{1, 3}, 10.1735}, {{2, 1}, 5.1356}, {{2, 2}, 8.4172}, {{2, 3}, 11.6198}, {{3, 1}, 6.3802}, {{3, 2}, 9.7610}, {{3, 3}, 13.0152} };
               if (bz.count({n, m})) { double lam = bz.at({n, m}); if (r_t <= R) val = ::std::cos(static_cast<double>(n) * th_t) * ::std::cyl_bessel_j(n, lam * r_t / R); }
           } else val = transducer_coupling_single(t.x, t.y, n, m, ctx.lx, ctx.ly, ctx.sign);
-          F_k += t.amplitude * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad)) * val;
+          F_k += force_amplitude * ::std::complex<double>(::std::cos(t.phase_rad), ::std::sin(t.phase_rad)) * val;
       }
       if (::std::abs(F_k) > 0.01) res_f.push_back(::std::round(cache_.f_nm[k] * 10.0) / 10.0);
   }

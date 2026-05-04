@@ -40,6 +40,8 @@ struct SimulationContext {
   double damping;
   int n_modes;
   int sign;
+  double base_volume_1 = 1.0;
+  double base_volume_2 = 1.0;
   ::std::vector<Transducer> transducers;
   VibrationSpeaker speaker;
 };
@@ -99,7 +101,8 @@ class PhysicsEngine {
     ::std::vector<Eigen::MatrixXd> modes;
     ::std::vector<int> ns;
     ::std::vector<int> ms;
-    double last_lx = 0.0, last_ly = 0.0;
+    double last_lx = 0.0, last_ly = 0.0, last_h = 0.0;
+    double last_e = 0.0, last_rho = 0.0, last_nu = 0.0;
     int last_n_modes = 0;
   } cache_;
 
