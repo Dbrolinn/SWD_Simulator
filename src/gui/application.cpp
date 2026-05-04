@@ -60,7 +60,7 @@ namespace chladni {
 
 Application::Application(const ::std::string& title, int width, int height)
     : window_(nullptr), title_(title), width_(width), height_(height) {
-  physics_ = ::std::make_shared<PhysicsEngine>(200);
+  physics_ = ::std::make_shared<PhysicsEngine>(400);
   analyzer_ = ::std::make_shared<Analyzer>(physics_);
 
   // Default context (SWAID Hardware Defaults)
@@ -72,10 +72,12 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.rho = 8000.0;
   ctx_.nu = 0.29;
   ctx_.damping = 0.005;
-  ctx_.n_modes = 10;
+  ctx_.n_modes = 20;
   ctx_.sign = 1;
   ctx_.base_volume_1 = 1.0;
   ctx_.base_volume_2 = 1.0;
+  ctx_.calib_m = 1.0;
+  ctx_.calib_b = 0.0;
   ctx_.speaker = {};
   
   // Default to exactly 4 transducers
@@ -263,19 +265,47 @@ void Application::shutdown() {
 }
 
 void Application::update_texture() {
+  static double last_rendered_f = -1.0;
+  static ::std::vector<Transducer> last_layout;
+  
+  bool changed = ::std::abs(last_rendered_f - current_freq_) > 1e-4;
+  if (!changed) {
+      if (last_layout.size() != ctx_.transducers.size()) {
+          changed = true;
+      } else {
+          for (size_t i = 0; i < ctx_.transducers.size(); ++i) {
+              if (::std::abs(ctx_.transducers[i].x - last_layout[i].x) > 1e-6 ||
+                  ::std::abs(ctx_.transducers[i].y - last_layout[i].y) > 1e-6) {
+                  changed = true;
+                  break;
+              }
+          }
+      }
+  }
+
+  if (!changed && !current_sand_.isZero()) return;
+
   physics_->compute_visuals(static_cast<double>(current_freq_), ctx_, current_sand_, current_deformation_);
 
-  ::std::vector<unsigned char> data(200 * 200 * 4);
-  for (int i = 0; i < 200; ++i) {
-    for (int j = 0; j < 200; ++j) {
+  int res = physics_->get_resolution();
+  ::std::vector<unsigned char> data(res * res * 4);
+  unsigned char* ptr = data.data();
+  
+  for (int i = 0; i < res; ++i) {
+    for (int j = 0; j < res; ++j) {
       double val = current_sand_(i, j);
       unsigned char c = static_cast<unsigned char>(::std::clamp(val * 255.0, 0.0, 255.0));
-      int idx = (i * 200 + j) * 4;
-      data[idx] = c; data[idx+1] = (unsigned char)(c * 0.9); data[idx+2] = (unsigned char)(c * 0.6); data[idx+3] = 255;
+      *ptr++ = c; 
+      *ptr++ = static_cast<unsigned char>(c * 0.9); 
+      *ptr++ = static_cast<unsigned char>(c * 0.6); 
+      *ptr++ = 255;
     }
   }
   glBindTexture(GL_TEXTURE_2D, plate_texture_);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 200, 200, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+  
+  last_rendered_f = current_freq_;
+  last_layout = ctx_.transducers;
 }
 
 void Application::render_pure_viewport(const nlohmann::json& symbol) {

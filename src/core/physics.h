@@ -42,6 +42,8 @@ struct SimulationContext {
   int sign;
   double base_volume_1 = 1.0;
   double base_volume_2 = 1.0;
+  double calib_m = 1.0;
+  double calib_b = 0.0;
   ::std::vector<Transducer> transducers;
   VibrationSpeaker speaker;
 };
@@ -85,6 +87,8 @@ class PhysicsEngine {
   // ── Helpers ──────────────────────────────────────────────────────────
   void clamp_transducer(Transducer& t, const SimulationContext& ctx);
 
+  int get_resolution() const { return resolution_; }
+
  private:
   int resolution_;
   Eigen::MatrixXd x_norm_;
@@ -92,6 +96,14 @@ class PhysicsEngine {
   Eigen::MatrixXd particles_;
   Eigen::MatrixXd particle_vel_;
   mutable ::std::recursive_mutex mutex_;
+
+  struct ResponseCache {
+      double last_f = -1.0;
+      Eigen::MatrixXcd last_resp;
+      ::std::vector<Transducer> last_transducers;
+      double last_vol1 = -1.0, last_vol2 = -1.0;
+      double last_damping = -1.0;
+  } resp_cache_;
 
   static const ::std::vector<double> kFreeBeamRoots;
 

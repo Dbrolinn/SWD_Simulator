@@ -30,6 +30,7 @@ struct LayoutResult {
   ::std::string layout_type;
   double param1, param2;
   double total_displacement = 0.0;
+  bool export_selected = true;
 };
 
 /**

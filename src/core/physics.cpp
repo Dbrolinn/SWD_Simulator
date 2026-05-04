@@ -131,11 +131,11 @@ void PhysicsEngine::build_cache_circ(const SimulationContext& ctx) {
   cache_.last_n_modes = ctx.n_modes;
   
   double R = ctx.lx / 2.0; double D = (ctx.e * ::std::pow(ctx.h, 3)) / (12.0 * (1.0 - ::std::pow(ctx.nu, 2)));
-  static const ::std::map<::std::pair<int, int>, double> bessel_zeros = { {{0, 1}, 2.4048}, {{0, 2}, 5.5201}, {{0, 3}, 8.6537}, {{1, 1}, 3.8317}, {{1, 2}, 7.0156}, {{1, 3}, 10.1735}, {{2, 1}, 5.1356}, {{2, 2}, 8.4172}, {{2, 3}, 11.6198}, {{3, 1}, 6.3802}, {{3, 2}, 9.7610}, {{3, 3}, 13.0152} };
+  static const ::std::map<::std::pair<int, int>, double> bsel_zeros = { {{0, 1}, 2.4048}, {{0, 2}, 5.5201}, {{0, 3}, 8.6537}, {{1, 1}, 3.8317}, {{1, 2}, 7.0156}, {{1, 3}, 10.1735}, {{2, 1}, 5.1356}, {{2, 2}, 8.4172}, {{2, 3}, 11.6198}, {{3, 1}, 6.3802}, {{3, 2}, 9.7610}, {{3, 3}, 13.0152} };
   cache_.ns.clear(); cache_.ms.clear(); cache_.modes.clear();
   for (int n = 0; n < 4; ++n) for (int m = 1; m <= 3; ++m) {
       cache_.ns.push_back(n); cache_.ms.push_back(m);
-      double lam = bessel_zeros.at({n, m}); double omega = (::std::pow(lam, 2) / ::std::pow(R, 2)) * ::std::sqrt(D / (ctx.rho * ctx.h));
+      double lam = bsel_zeros.at({n, m}); double omega = (::std::pow(lam, 2) / ::std::pow(R, 2)) * ::std::sqrt(D / (ctx.rho * ctx.h));
       int k = static_cast<int>(cache_.ns.size()) - 1;
       cache_.f_nm.conservativeResize(k + 1); cache_.omega_nm.conservativeResize(k + 1);
       cache_.f_nm[k] = omega / (2.0 * M_PI); cache_.omega_nm[k] = omega;
@@ -150,6 +150,30 @@ void PhysicsEngine::build_cache_circ(const SimulationContext& ctx) {
 
 Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const SimulationContext& ctx) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
+  
+  // Cache check
+  bool transducers_changed = (resp_cache_.last_transducers.size() != ctx.transducers.size());
+  if (!transducers_changed) {
+      for (size_t i = 0; i < ctx.transducers.size(); ++i) {
+          if (::std::abs(ctx.transducers[i].x - resp_cache_.last_transducers[i].x) > 1e-6 ||
+              ::std::abs(ctx.transducers[i].y - resp_cache_.last_transducers[i].y) > 1e-6 ||
+              ::std::abs(ctx.transducers[i].amplitude - resp_cache_.last_transducers[i].amplitude) > 1e-6 ||
+              ::std::abs(ctx.transducers[i].phase_rad - resp_cache_.last_transducers[i].phase_rad) > 1e-6) {
+              transducers_changed = true;
+              break;
+          }
+      }
+  }
+
+  if (::std::abs(resp_cache_.last_f - frequency) < 1e-3 && 
+      !transducers_changed &&
+      ::std::abs(resp_cache_.last_vol1 - ctx.base_volume_1) < 1e-4 &&
+      ::std::abs(resp_cache_.last_vol2 - ctx.base_volume_2) < 1e-4 &&
+      ::std::abs(resp_cache_.last_damping - ctx.damping) < 1e-6 &&
+      resp_cache_.last_resp.rows() == resolution_) {
+      return resp_cache_.last_resp;
+  }
+
   if (ctx.geometry == Geometry::kCircular) build_cache_circ(ctx); else build_cache_rect(ctx);
   Eigen::VectorXcd F_nm = Eigen::VectorXcd::Zero(cache_.ns.size());
   double global_gain = speaker_drive_gain(frequency, ctx, true);
@@ -179,16 +203,39 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
     ::std::complex<double> denom = ::std::pow(cache_.omega_nm[k], 2) - ::std::pow(omega, 2) + ::std::complex<double>(0, 2.0 * ctx.damping * cache_.omega_nm[k] * omega);
     if (::std::abs(denom) > 1e-18) resp += (F_nm[k] / denom) * cache_.modes[k].cast<::std::complex<double>>();
   }
+
+  // Update Cache
+  resp_cache_.last_f = frequency;
+  resp_cache_.last_resp = resp;
+  resp_cache_.last_transducers = ctx.transducers;
+  resp_cache_.last_vol1 = ctx.base_volume_1;
+  resp_cache_.last_vol2 = ctx.base_volume_2;
+  resp_cache_.last_damping = ctx.damping;
+
   return resp;
 }
 
 void PhysicsEngine::compute_visuals(double freq, const SimulationContext& ctx, Eigen::MatrixXd& sand, Eigen::MatrixXd& deformation) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
+  static Eigen::MatrixXcd last_visual_resp;
+  static double last_visual_f = -1.0;
+
   Eigen::MatrixXcd resp = compute_driven_response(freq, ctx);
+  
+  if (last_visual_resp.rows() == resp.rows() && 
+      last_visual_resp.cols() == resp.cols() && 
+      ::std::abs(last_visual_f - freq) < 1e-4 &&
+      (last_visual_resp.array() == resp.array()).all()) {
+      return; 
+  }
+
   Eigen::MatrixXd amp = resp.array().abs(); double m_amp = amp.maxCoeff();
   if (m_amp > 1e-18) amp /= m_amp;
   sand = (-35.0 * amp.array().pow(2)).exp(); deformation = resp.real();
   double m_def = deformation.array().abs().maxCoeff(); if (m_def > 1e-18) deformation /= m_def;
+  
+  last_visual_resp = resp;
+  last_visual_f = freq;
 }
 
 bool PhysicsEngine::check_power_feasibility(double frequency, const SimulationContext& ctx) {

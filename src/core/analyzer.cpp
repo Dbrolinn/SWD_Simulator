@@ -49,29 +49,6 @@ void Analyzer::repair_layout(::std::vector<Transducer>& layout, const Simulation
     }
 }
 
-::std::vector<Transducer> Analyzer::crossover(const ::std::vector<Transducer>& p1, const ::std::vector<Transducer>& p2) {
-    ::std::vector<Transducer> child;
-    ::std::random_device rd; ::std::mt19937 gen(rd());
-    ::std::uniform_int_distribution<> coin(0, 1);
-    for (size_t i = 0; i < p1.size(); ++i) {
-        child.push_back(coin(gen) ? p1[i] : p2[i]);
-    }
-    return child;
-}
-
-void Analyzer::mutate(::std::vector<Transducer>& layout, double rate, const SimulationContext& ctx) {
-    ::std::random_device rd; ::std::mt19937 gen(rd());
-    ::std::uniform_real_distribution<> prob(0.0, 1.0);
-    ::std::normal_distribution<> offset(0.0, 0.02);
-    for (auto& t : layout) {
-        if (prob(gen) < rate) {
-            t.x += offset(gen);
-            t.y += offset(gen);
-        }
-    }
-    repair_layout(layout, ctx);
-}
-
 LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, const SimulationContext& base_ctx) {
     LayoutResult res;
     res.best_layout = layout;
@@ -91,10 +68,14 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
     int feasible_count = 0;
     int total_evaluated = 0;
 
-    for (int n = 1; n <= 10; ++n) {
-        for (int m = 1; m <= 10; ++m) {
+    for (int n = 1; n <= eval_ctx.n_modes; ++n) {
+        for (int m = 1; m <= eval_ctx.n_modes; ++m) {
             total_evaluated++;
-            double freq = physics_->calculate_mode_frequency(n, m, eval_ctx);
+            double theoretical_f = physics_->calculate_mode_frequency(n, m, eval_ctx);
+            double freq = (theoretical_f * base_ctx.calib_m) + base_ctx.calib_b;
+            
+            if (freq > 20000.0) continue; // Hardware ceiling
+
             ::std::vector<double> phases = physics_->snipe_phases(n, m, eval_ctx);
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
                 eval_ctx.transducers[i].phase_rad = phases[i];
@@ -253,6 +234,8 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
     nlohmann::json root = nlohmann::json::array();
     int current_id = 1;
     for (const auto& res : results) {
+        if (!res.export_selected) continue;
+        
         nlohmann::json symbol;
         double freq = res.best_layout.empty() ? 0.0 : res.best_layout[0].frequency.value_or(0.0);
         int freq_int = static_cast<int>(::std::round(freq));
@@ -315,19 +298,34 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
     };
     ::std::vector<ModeInfo> unique_modes;
 
-    int total_modes = 100;
+    int total_modes = eval_ctx.n_modes * eval_ctx.n_modes;
     int current_mode = 0;
-    for (int n = 1; n <= 10; ++n) {
-        for (int m = 1; m <= 10; ++m) {
+    for (int n = 1; n <= eval_ctx.n_modes; ++n) {
+        for (int m = 1; m <= eval_ctx.n_modes; ++m) {
             sweep_progress_ = (float)current_mode++ / total_modes;
             double theoretical_f = physics_->calculate_mode_frequency(n, m, eval_ctx);
+            double calibrated_f = (theoretical_f * base_ctx.calib_m) + base_ctx.calib_b;
+
+            if (calibrated_f > 20000.0) continue; // Hardware ceiling
             
-            double best_f = theoretical_f;
+            double best_f = calibrated_f;
             double max_peak = 0.0;
             
-            // Sweep around theoretical +/- 5% to find peak resonance
+            // Step 1: Coarse sweep (+/- 5%, 20 points)
+            double window = calibrated_f * 0.05;
             for (int i = 0; i <= 20; ++i) {
-                double f = theoretical_f * (0.95 + 0.1 * i / 20.0);
+                double f = (calibrated_f - window) + (2.0 * window * i / 20.0);
+                Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
+                double peak = resp.array().abs().maxCoeff();
+                if (peak > max_peak) {
+                    max_peak = peak;
+                    best_f = f;
+                }
+            }
+            
+            // Step 2: High-Q Fine Sweep (+/- 15Hz around coarse peak, 0.5Hz steps)
+            double fine_center = best_f;
+            for (double f = fine_center - 15.0; f <= fine_center + 15.0; f += 0.5) {
                 Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
                 double peak = resp.array().abs().maxCoeff();
                 if (peak > max_peak) {

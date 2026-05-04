@@ -22,6 +22,7 @@ class Panels {
   static void draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer);
   static void draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer);
   static void draw_stage4_batch(SimulationContext& ctx, Application* app, bool& is_batch_running, float& batch_progress, ::std::string& batch_status);
+  static void draw_stage5_calibration(SimulationContext& ctx);
   
   static void draw_material_selector(SimulationContext& ctx);
 };

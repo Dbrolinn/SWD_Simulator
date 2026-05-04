@@ -19,8 +19,9 @@
 namespace chladni {
 
 void Panels::draw_main_ui(SimulationContext& ctx, Application* app, Analyzer& analyzer, float& current_freq, float& f_max, bool& is_batch_running, float& batch_progress, ::std::string& batch_status) {
+    ImGui::SetNextWindowSize(ImVec2(450, 600), ImGuiCond_FirstUseEver);
     ImGui::Begin("Workflow Pipeline");
-    if (ImGui::BeginTabBar("Stages")) {
+    if (ImGui::BeginTabBar("Stages", ImGuiTabBarFlags_FittingPolicyScroll)) {
         if (ImGui::BeginTabItem("Stage 1: Manual")) {
             draw_stage1_manual(ctx, app, current_freq, f_max);
             ImGui::EndTabItem();
@@ -35,6 +36,10 @@ void Panels::draw_main_ui(SimulationContext& ctx, Application* app, Analyzer& an
         }
         if (ImGui::BeginTabItem("Stage 4: Batch Plotter")) {
             draw_stage4_batch(ctx, app, is_batch_running, batch_progress, batch_status);
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Stage 5: Lab Calibration")) {
+            draw_stage5_calibration(ctx);
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
@@ -244,6 +249,78 @@ void Panels::draw_stage4_batch(SimulationContext& ctx, Application* app, bool& i
         if (ImGui::Button("Render from master_symbols.json", ImVec2(-1, 40))) {
             app->start_batch_plotting("../master_symbols.json", "../dictionary");
         }
+    }
+}
+
+void Panels::draw_stage5_calibration(SimulationContext& ctx) {
+    ImGui::Text("Lab Calibration Module");
+    ImGui::Separator();
+    
+    struct CalibPoint {
+        double theoretical;
+        double actual;
+    };
+    static ::std::vector<CalibPoint> points;
+    
+    if (ImGui::Button("Add Data Point")) {
+        points.push_back({0.0, 0.0});
+    }
+    
+    if (ImGui::BeginTable("CalibTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+        ImGui::TableSetupColumn("Theoretical (Hz)");
+        ImGui::TableSetupColumn("Actual Lab (Hz)");
+        ImGui::TableSetupColumn("Action", ImGuiTableColumnFlags_WidthFixed, 60.0f);
+        ImGui::TableHeadersRow();
+        
+        for (size_t i = 0; i < points.size(); ++i) {
+            ImGui::TableNextRow();
+            ImGui::PushID(static_cast<int>(i));
+            
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-1);
+            ImGui::InputDouble("##Theo", &points[i].theoretical);
+            
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-1);
+            ImGui::InputDouble("##Actual", &points[i].actual);
+            
+            ImGui::TableSetColumnIndex(2);
+            if (ImGui::Button("Remove")) {
+                points.erase(points.begin() + i);
+                ImGui::PopID();
+                break;
+            }
+            ImGui::PopID();
+        }
+        ImGui::EndTable();
+    }
+    
+    if (ImGui::Button("Calculate Calibration", ImVec2(-1, 40))) {
+        if (points.size() >= 2) {
+            double sum_x = 0, sum_y = 0, sum_xy = 0, sum_x2 = 0;
+            for (const auto& p : points) {
+                sum_x += p.theoretical;
+                sum_y += p.actual;
+                sum_xy += p.theoretical * p.actual;
+                sum_x2 += p.theoretical * p.theoretical;
+            }
+            double n = static_cast<double>(points.size());
+            double denominator = (n * sum_x2 - sum_x * sum_x);
+            if (::std::abs(denominator) > 1e-9) {
+                ctx.calib_m = (n * sum_xy - sum_x * sum_y) / denominator;
+                ctx.calib_b = (sum_y - ctx.calib_m * sum_x) / n;
+            }
+        }
+    }
+    
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::TextColored(ImVec4(0, 1, 0, 1), "Active Calibration:");
+    ImGui::Text("f_actual = %.6f * f_theoretical + %.2f", ctx.calib_m, ctx.calib_b);
+    
+    if (ImGui::Button("Reset to Ideal (1.0, 0.0)")) {
+        ctx.calib_m = 1.0;
+        ctx.calib_b = 0.0;
     }
 }
 
