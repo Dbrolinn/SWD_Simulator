@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <cstring>
 #include <fstream>
+#include <cfloat>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -30,40 +31,14 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-// Vertex Shader for 3D Surface
-const char* vertexShaderSource = R"(
-    #version 330 core
-    layout (location = 0) in vec3 aPos;
-    layout (location = 1) in float aHeight;
-    out float Height;
-    uniform mat4 model;
-    uniform mat4 view;
-    uniform mat4 projection;
-    void main() {
-        gl_Position = projection * view * model * vec4(aPos.x, aHeight * 0.1, aPos.z, 1.0);
-        Height = aHeight;
-    }
-)";
-
-// Fragment Shader for 3D Surface
-const char* fragmentShaderSource = R"(
-    #version 330 core
-    in float Height;
-    out vec4 FragColor;
-    void main() {
-        vec3 color = mix(vec3(0.2, 0.4, 0.8), vec3(0.8, 0.2, 0.2), (Height + 1.0) * 0.5);
-        FragColor = vec4(color, 1.0);
-    }
-)";
-
 namespace chladni {
 
 Application::Application(const ::std::string& title, int width, int height)
     : window_(nullptr), title_(title), width_(width), height_(height) {
-  physics_ = ::std::make_shared<PhysicsEngine>(400);
+  
+  physics_ = ::std::make_shared<PhysicsEngine>(200);
   analyzer_ = ::std::make_shared<Analyzer>(physics_);
 
-  // Default context (SWAID Hardware Defaults)
   ctx_.geometry = Geometry::kRectangular;
   ctx_.lx = 0.30;
   ctx_.ly = 0.20;
@@ -72,37 +47,31 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.rho = 8000.0;
   ctx_.nu = 0.29;
   ctx_.damping = 0.005;
-  ctx_.n_modes = 20;
+  ctx_.n_modes = 15;
+  ctx_.max_frequency = 20000.0;
   ctx_.sign = 1;
   ctx_.base_volume_1 = 1.0;
   ctx_.base_volume_2 = 1.0;
   ctx_.calib_m = 1.0;
   ctx_.calib_b = 0.0;
+  ctx_.transducer_radius_m = 0.025;
+  ctx_.transducer_spacing_m = 0.005;
   ctx_.speaker = {};
   
-  // Default to exactly 4 transducers
   ctx_.transducers.clear();
-  for (int i = 0; i < 4; ++i) {
-    ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
-  }
+  for (int i = 0; i < 4; ++i) ctx_.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
 }
 
-Application::~Application() {
-  shutdown();
-}
+Application::~Application() { shutdown(); }
 
 bool Application::init() {
   if (!glfwInit()) return false;
-
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
-  if (!window_) {
-    glfwTerminate();
-    return false;
-  }
+  if (!window_) { glfwTerminate(); return false; }
 
   glfwMakeContextCurrent(window_);
   glfwSwapInterval(1);
@@ -122,140 +91,26 @@ bool Application::init() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  init_3d_resources();
+  refresh_sim_files();
 
   return true;
 }
 
-void Application::init_3d_resources() {
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    shader_program_ = glCreateProgram();
-    glAttachShader(shader_program_, vertexShader);
-    glAttachShader(shader_program_, fragmentShader);
-    glLinkProgram(shader_program_);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    for (int i = 0; i <= mesh_res_; ++i) {
-        for (int j = 0; j <= mesh_res_; ++j) {
-            mesh_vertices_.push_back((float)j / mesh_res_ - 0.5f);
-            mesh_vertices_.push_back(0.0f);
-            mesh_vertices_.push_back((float)i / mesh_res_ - 0.5f);
-            mesh_vertices_.push_back(0.0f);
+void Application::refresh_sim_files() {
+    available_sim_files_.clear();
+    try {
+        if (!::std::filesystem::exists("./sim")) return;
+        for (const auto& entry : ::std::filesystem::directory_iterator("./sim")) {
+            if (entry.path().extension() == ".json") {
+                available_sim_files_.push_back(entry.path().filename().string());
+            }
         }
-    }
-
-    for (int i = 0; i < mesh_res_; ++i) {
-        for (int j = 0; j < mesh_res_; ++j) {
-            int row1 = i * (mesh_res_ + 1);
-            int row2 = (i + 1) * (mesh_res_ + 1);
-            mesh_indices_.push_back(row1 + j);
-            mesh_indices_.push_back(row1 + j + 1);
-            mesh_indices_.push_back(row2 + j);
-            mesh_indices_.push_back(row1 + j + 1);
-            mesh_indices_.push_back(row2 + j + 1);
-            mesh_indices_.push_back(row2 + j);
-        }
-    }
-
-    glGenVertexArrays(1, &surface_vao_);
-    glGenBuffers(1, &surface_vbo_);
-    glGenBuffers(1, &surface_ebo_);
-
-    glBindVertexArray(surface_vao_);
-    glBindBuffer(GL_ARRAY_BUFFER, surface_vbo_);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(mesh_vertices_.size() * sizeof(float)), mesh_vertices_.data(), GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, surface_ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(mesh_indices_.size() * sizeof(unsigned int)), mesh_indices_.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glGenFramebuffers(1, &fbo_);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
-
-    glGenTextures(1, &f_texture_);
-    glBindTexture(GL_TEXTURE_2D, f_texture_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, f_texture_, 0);
-
-    glGenRenderbuffers(1, &rbo_);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo_);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo_);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Application::update_3d_mesh() {
-    for (int i = 0; i <= mesh_res_; ++i) {
-        for (int j = 0; j <= mesh_res_; ++j) {
-            int di = ::std::clamp((int)(i * 200 / mesh_res_), 0, 199);
-            int dj = ::std::clamp((int)(j * 200 / mesh_res_), 0, 199);
-            float h = (float)current_deformation_(di, dj);
-            mesh_vertices_[(i * (mesh_res_ + 1) + j) * 4 + 3] = h;
-        }
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, surface_vbo_);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(mesh_vertices_.size() * sizeof(float)), mesh_vertices_.data());
-}
-
-void Application::draw_3d_mesh() {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
-    glViewport(0, 0, 800, 600);
-    glClearColor(0.15f, 0.15f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-
-    glUseProgram(shader_program_);
-
-    float time = (float)glfwGetTime();
-    Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-    float angle = time * 0.5f;
-    model(0,0) = ::std::cos(angle); model(0,2) = ::std::sin(angle);
-    model(2,0) = -::std::sin(angle); model(2,2) = ::std::cos(angle);
-
-    Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
-    view(2,3) = -1.5f;
-
-    Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
-    float aspect = 800.0f / 600.0f;
-    float fov = 45.0f * 3.14159f / 180.0f;
-    float f = 1.0f / ::std::tan(fov / 2.0f);
-    proj(0,0) = f / aspect;
-    proj(1,1) = f;
-    proj(2,2) = (100.0f + 0.1f) / (0.1f - 100.0f);
-    proj(2,3) = (2.0f * 100.0f * 0.1f) / (0.1f - 100.0f);
-    proj(3,2) = -1.0f;
-
-    glUniformMatrix4fv(glGetUniformLocation(shader_program_, "model"), 1, GL_FALSE, model.data());
-    glUniformMatrix4fv(glGetUniformLocation(shader_program_, "view"), 1, GL_FALSE, view.data());
-    glUniformMatrix4fv(glGetUniformLocation(shader_program_, "projection"), 1, GL_FALSE, proj.data());
-
-    glBindVertexArray(surface_vao_);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDrawElements(GL_TRIANGLES, (int)mesh_indices_.size(), GL_UNSIGNED_INT, 0);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        ::std::sort(available_sim_files_.rbegin(), available_sim_files_.rend());
+    } catch (...) {}
 }
 
 void Application::shutdown() {
   if (plate_texture_) glDeleteTextures(1, &plate_texture_);
-  if (f_texture_) glDeleteTextures(1, &f_texture_);
-  if (fbo_) glDeleteFramebuffers(1, &fbo_);
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImPlot::DestroyContext();
@@ -275,7 +130,9 @@ void Application::update_texture() {
       } else {
           for (size_t i = 0; i < ctx_.transducers.size(); ++i) {
               if (::std::abs(ctx_.transducers[i].x - last_layout[i].x) > 1e-6 ||
-                  ::std::abs(ctx_.transducers[i].y - last_layout[i].y) > 1e-6) {
+                  ::std::abs(ctx_.transducers[i].y - last_layout[i].y) > 1e-6 ||
+                  ::std::abs(ctx_.transducers[i].amplitude - last_layout[i].amplitude) > 1e-6 ||
+                  ::std::abs(ctx_.transducers[i].phase_rad - last_layout[i].phase_rad) > 1e-6) {
                   changed = true;
                   break;
               }
@@ -325,7 +182,6 @@ void Application::render_pure_viewport(const nlohmann::json& symbol) {
             ImPlot::EndPlot();
         }
 
-        // Burn metadata onto the clean image
         char caption[512];
         ::std::snprintf(caption, sizeof(caption), 
             "Symbol: %s\nFreq: %.1f Hz\nAmp1: %.2f | Amp2: %.2f", 
@@ -367,7 +223,6 @@ void Application::run() {
                 current_freq_ = static_cast<float>(freq);
                 update_texture();
 
-                // PURE RENDER (No UI Panels, No Particles)
                 ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
                 
                 render_pure_viewport(symbol);
@@ -378,7 +233,6 @@ void Application::run() {
                 glViewport(0, 0, dw, dh); glClearColor(0.05f, 0.05f, 0.05f, 1.0f); glClear(GL_COLOR_BUFFER_BIT);
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-                // Save
                 ::std::string json_image_path = symbol["ui_metadata"].value("image_path", "");
                 ::std::string filename = (json_image_path.empty()) ? 
                     (batch_output_dir_ + "/CHLADNI_" + ::std::to_string((int)freq) + ".png") :
@@ -398,7 +252,7 @@ void Application::run() {
             batch_status_ = "Batch Complete.";
             ::std::cout << "[Batch] All renders complete." << ::std::endl;
         }
-        continue; // Skip normal UI loop during batch
+        continue;
     }
 
     ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
@@ -407,10 +261,15 @@ void Application::run() {
         double current_time = glfwGetTime();
         if (current_time - last_sweep_tick_ > 0.05) { current_freq_ += sweep_step_; if (current_freq_ > sweep_end_) { current_freq_ = sweep_end_; is_sweeping_ = false; } last_sweep_tick_ = current_time; }
     }
+    
     Eigen::MatrixXcd response = physics_->compute_driven_response(static_cast<double>(current_freq_), ctx_);
-    if (show_particles_) physics_->step_particles(response, ctx_.lx, ctx_.ly, 0.016);
+    if (show_particles_ && !analyzer_->is_analyzing()) {
+        physics_->step_particles(response, ctx_.lx, ctx_.ly, 0.016);
+    }
+    
     update_texture();
     render_ui();
+    
     ImGui::Render();
     int dw, dh; glfwGetFramebufferSize(window_, &dw, &dh);
     glViewport(0, 0, dw, dh); glClearColor(0.1f, 0.1f, 0.1f, 1.0f); glClear(GL_COLOR_BUFFER_BIT);
@@ -421,9 +280,11 @@ void Application::run() {
 
 void Application::render_ui() {
   ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
-  render_panels(); render_viewport();
-  ImGui::Begin("Spectrum");
   
+  render_panels(); 
+  render_viewport();
+  
+  ImGui::Begin("Spectrum");
   static ::std::vector<double> spectrum_data; 
   static ::std::vector<double> freq_axis;
   static float last_f_max = 0.0f;
@@ -452,61 +313,265 @@ void Application::render_ui() {
       ImPlot::EndPlot();
   }
   ImGui::End();
+
   render_sweeper_tab();
 }
 
 void Application::render_viewport() {
-  ImGui::Begin("Plate Viewport");
-  if (ImPlot::BeginPlot("##PlatePlot", ImVec2(-1, -1), ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
-      double x_min = -ctx_.lx / 2.0, x_max = ctx_.lx / 2.0;
-      double y_min = -(ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
-      double y_max = (ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+  ImGui::Begin("Engineering Workstation");
+  
+  if (ImGui::BeginTabBar("WorkstationTabs")) {
       
-      ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
-      ImPlot::SetupAxesLimits(x_min * 1.1, x_max * 1.1, y_min * 1.1, y_max * 1.1);
-      ImPlot::PlotImage("Plate", (void*)(intptr_t)plate_texture_, ImPlotPoint(x_min, y_min), ImPlotPoint(x_max, y_max));
-      for (size_t i = 0; i < ctx_.transducers.size(); ++i) {
-          ::std::string id = "T" + ::std::to_string(i + 1);
-          if (ImPlot::DragPoint(static_cast<int>(i), &ctx_.transducers[i].x, &ctx_.transducers[i].y, ImVec4(1, 0.5, 0, 1), 4)) {
-              physics_->clamp_transducer(ctx_.transducers[i], ctx_);
-          }
-          // Draw mechanical clearance boundary (50mm radius)
-          static double circle_x[64], circle_y[64];
-          static bool circle_init = false;
-          if (!circle_init) {
-              for (int j = 0; j < 64; ++j) {
-                  double a = 2.0 * 3.14159 * j / 63.0;
-                  circle_x[j] = ::std::cos(a);
-                  circle_y[j] = ::std::sin(a);
-              }
-              circle_init = true;
-          }
-          double draw_x[64], draw_y[64];
-          for (int j = 0; j < 64; ++j) {
-              draw_x[j] = ctx_.transducers[i].x + 0.025 * circle_x[j];
-              draw_y[j] = ctx_.transducers[i].y + 0.025 * circle_y[j];
+      // --- TAB 1: LIVE PLATE VIEWER ---
+      if (ImGui::BeginTabItem("Live Plate Viewport")) {
+          ImGui::Checkbox("Show Particles", &show_particles_);
+          if (analyzer_->is_analyzing()) {
+              ImGui::SameLine();
+              ImGui::TextColored(ImVec4(1,0,0,1), " (Paused: CPU optimizing background tasks)");
           }
 
-          ImPlot::PlotLine("Clearance", draw_x, draw_y, 64);
-          ImPlot::Annotation(ctx_.transducers[i].x, ctx_.transducers[i].y, ImVec4(0,0,0,0), ImVec2(10, -10), true, "%s", id.c_str());
-      }
-      if (show_particles_) {
-          const auto& pts = physics_->get_particles();
-          if (pts.rows() > 0) {
-              ImPlotSpec spec; spec.Marker = ImPlotMarker_Circle; spec.MarkerSize = 1.0f; spec.MarkerFillColor = ImVec4(1, 1, 0.8, 1); spec.MarkerLineColor = ImVec4(1, 1, 0.8, 1);
-              ImPlot::PlotScatter("Particles", pts.col(0).data(), pts.col(1).data(), static_cast<int>(pts.rows()), spec);
+          if (ImPlot::BeginPlot("##PlatePlot", ImVec2(-1, -1), ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
+              double x_min = -ctx_.lx / 2.0, x_max = ctx_.lx / 2.0;
+              double y_min = -(ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+              double y_max = (ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0;
+              
+              ImPlot::SetupAxes(NULL, NULL, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
+              ImPlot::SetupAxesLimits(x_min * 1.1, x_max * 1.1, y_min * 1.1, y_max * 1.1);
+              
+              ImPlot::PlotImage("Plate", (void*)(intptr_t)plate_texture_, ImPlotPoint(x_min, y_min), ImPlotPoint(x_max, y_max));
+              
+              for (size_t i = 0; i < ctx_.transducers.size(); ++i) {
+                  ::std::string id = "T" + ::std::to_string(i + 1);
+                  if (ImPlot::DragPoint(static_cast<int>(i), &ctx_.transducers[i].x, &ctx_.transducers[i].y, ImVec4(1, 0.5, 0, 1), 4)) {
+                      physics_->clamp_transducer(ctx_.transducers[i], ctx_);
+                  }
+                  
+                  static double circle_x[64], circle_y[64];
+                  static bool circle_init = false;
+                  if (!circle_init) {
+                      for (int j = 0; j < 64; ++j) {
+                          double a = 2.0 * 3.14159 * j / 63.0;
+                          circle_x[j] = ::std::cos(a);
+                          circle_y[j] = ::std::sin(a);
+                      }
+                      circle_init = true;
+                  }
+                  double draw_x[64], draw_y[64];
+                  for (int j = 0; j < 64; ++j) {
+                      draw_x[j] = ctx_.transducers[i].x + ctx_.transducer_radius_m * circle_x[j];
+                      draw_y[j] = ctx_.transducers[i].y + ctx_.transducer_radius_m * circle_y[j];
+                  }
+
+                  ImPlot::PlotLine("Clearance", draw_x, draw_y, 64);
+                  ImPlot::Annotation(ctx_.transducers[i].x, ctx_.transducers[i].y, ImVec4(0,0,0,0), ImVec2(10, -10), true, "%s", id.c_str());
+              }
+              
+              if (show_particles_ && !analyzer_->is_analyzing()) {
+                  const auto& pts = physics_->get_particles();
+                  if (pts.rows() > 0) {
+                      ImPlotSpec spec; spec.Marker = ImPlotMarker_Circle; spec.MarkerSize = 1.0f; spec.MarkerFillColor = ImVec4(1, 1, 0.8, 1); spec.MarkerLineColor = ImVec4(1, 1, 0.8, 1);
+                      ImPlot::PlotScatter("Particles", pts.col(0).data(), pts.col(1).data(), static_cast<int>(pts.rows()), spec);
+                  }
+              }
+              ImPlot::EndPlot();
           }
+          ImGui::EndTabItem();
       }
-      ImPlot::EndPlot();
+
+      // --- TAB 2: INTERACTIVE HEATMAP ---
+      if (ImGui::BeginTabItem("Symmetry Heatmap Tool")) {
+          ImGui::Text("Load previous simulation data to analyze the optimization landscape:");
+          ImGui::SameLine();
+          if (ImGui::Button("Refresh")) refresh_sim_files();
+
+          const HeatmapData& hm = analyzer_->get_heatmap_data();
+
+          if (!available_sim_files_.empty()) {
+              const char* current_file = available_sim_files_[selected_sim_file_idx_].c_str();
+              if (ImGui::BeginCombo("##FileCombo", current_file)) {
+                  for (size_t i = 0; i < available_sim_files_.size(); ++i) {
+                      bool is_selected = (selected_sim_file_idx_ == static_cast<int>(i));
+                      if (ImGui::Selectable(available_sim_files_[i].c_str(), is_selected)) selected_sim_file_idx_ = static_cast<int>(i);
+                      if (is_selected) ImGui::SetItemDefaultFocus();
+                  }
+                  ImGui::EndCombo();
+              }
+              
+              ImGui::SameLine();
+              if (ImGui::Button("Load File Matrix")) {
+                  if (analyzer_->load_sim_results("./sim/" + available_sim_files_[selected_sim_file_idx_], ctx_)) {
+                      const HeatmapData& loaded_hm = analyzer_->get_heatmap_data();
+                      if (loaded_hm.valid) {
+                          // FIX: AUTOMATICALLY PRIME STAGE 2 FOR FINE SWEEP!
+                          stage2_params_.use_roi = true;
+                          stage2_params_.roi_dx_min = loaded_hm.dx_min;
+                          stage2_params_.roi_dx_max = loaded_hm.dx_max;
+                          stage2_params_.roi_dy_min = loaded_hm.dy_min;
+                          stage2_params_.roi_dy_max = loaded_hm.dy_max;
+                          stage2_params_.step_size_m = 0.001f; 
+                      }
+                  }
+              }
+              
+              if (hm.valid) {
+                  ImGui::SameLine();
+                  if (ImGui::Button("Clear Heatmap Memory")) {
+                      analyzer_->clear_heatmap();
+                      stage2_params_.use_roi = false;
+                      stage2_params_.step_size_m = 0.015f; 
+                  }
+              }
+          } else {
+              ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "No .json files found in ./sim/");
+              if (hm.valid) {
+                  ImGui::SameLine();
+                  if (ImGui::Button("Clear Heatmap Memory")) {
+                      analyzer_->clear_heatmap();
+                      stage2_params_.use_roi = false;
+                      stage2_params_.step_size_m = 0.015f; 
+                  }
+              }
+          }
+
+          ImGui::Separator();
+
+          if (hm.valid) {
+              ImGui::TextColored(ImVec4(0, 1, 1, 1), "Tip: Right-Click and drag to zoom into a hotspot. Shift + Left-Click to draw a selection box.");
+              
+              // -------------------------------------------------------------
+              // DISCRETE COLORMAP BINNING
+              // -------------------------------------------------------------
+              ::std::vector<float> unique_scores;
+              for (float s : hm.scores) {
+                  if (s > 0.0f && ::std::find(unique_scores.begin(), unique_scores.end(), s) == unique_scores.end()) {
+                      unique_scores.push_back(s);
+                  }
+              }
+              ::std::sort(unique_scores.begin(), unique_scores.end());
+              
+              ::std::vector<float> mapped_scores(hm.scores.size(), 0.0f);
+              for (size_t i = 0; i < hm.scores.size(); ++i) {
+                  if (hm.scores[i] > 0.0f) {
+                      auto it = ::std::find(unique_scores.begin(), unique_scores.end(), hm.scores[i]);
+                      mapped_scores[i] = static_cast<float>(::std::distance(unique_scores.begin(), it) + 1);
+                  }
+              }
+              float max_bin = ::std::max(1.0f, static_cast<float>(unique_scores.size()));
+
+              // Compute grid cell bounds mathematically
+              float step_x = (hm.nx > 1) ? (hm.dx_max - hm.dx_min) / (hm.nx - 1) : 0.015f;
+              float step_y = (hm.ny > 1) ? (hm.dy_max - hm.dy_min) / (hm.ny - 1) : 0.015f;
+
+              // FIX: REORDER DATA TO PREVENT UPSIDE-DOWN RENDERING
+              ::std::vector<float> display_scores(hm.nx * hm.ny, 0.0f);
+              for (int y = 0; y < hm.ny; ++y) {
+                  for (int x = 0; x < hm.nx; ++x) {
+                      // ImPlot draws data[0] at top-left. We map dy_max (ny-1) to the top row.
+                      int inverted_y = hm.ny - 1 - y;
+                      display_scores[inverted_y * hm.nx + x] = mapped_scores[y * hm.nx + x];
+                  }
+              }
+
+              static bool cancel_roi = false;
+              bool has_selection = false;
+              ImPlotRect selection;
+              ImPlotRect limits;
+              bool has_limits = false;
+
+              if (ImPlot::BeginPlot("##SymmetryMap", ImVec2(-1, -60), ImPlotFlags_NoLegend)) {
+                  ImPlot::SetupAxes("Transducer dx Offset (m)", "Transducer dy Offset (m)");
+                  ImPlot::SetupAxesLimits(0, ctx_.lx / 2.0, 0, (ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0);
+                  
+                  limits = ImPlot::GetPlotLimits();
+                  has_limits = true;
+
+                  // Plot Heatmap using corrected inverted rows
+                  ImPlot::PlotHeatmap("Alphabet Size", display_scores.data(), hm.ny, hm.nx, 0.0f, max_bin, nullptr,
+                                      ImPlotPoint((double)(hm.dx_min - step_x/2.0f), (double)(hm.dy_min - step_y/2.0f)), 
+                                      ImPlotPoint((double)(hm.dx_max + step_x/2.0f), (double)(hm.dy_max + step_y/2.0f)));
+                  
+                  // Manually draw the TRUE score text over each cell (Zeros Restored!)
+                  for (int y = 0; y < hm.ny; ++y) {
+                      for (int x = 0; x < hm.nx; ++x) {
+                          float val = hm.scores[y * hm.nx + x];
+                          float px = hm.dx_min + x * step_x;
+                          float py = hm.dy_min + y * step_y;
+                          char buf[16]; ::std::snprintf(buf, sizeof(buf), "%.0f", val);
+                          ImPlot::PlotText(buf, px, py); 
+                      }
+                  }
+
+                  // -------------------------------------------------------------
+                  // TOP 10 HIGHLIGHTING
+                  // -------------------------------------------------------------
+                  const auto& tops = analyzer_->get_top_layouts();
+                  if (!tops.empty()) {
+                      for (size_t i = 0; i < tops.size(); ++i) {
+                          double tx = static_cast<double>(tops[i].grid_dx);
+                          double ty = static_cast<double>(tops[i].grid_dy);
+                          
+                          // Draw a prominent Gold annotation pointing exactly to the hotspot
+                          char lbl[32]; ::std::snprintf(lbl, sizeof(lbl), "  #%zu  ", i+1);
+                          ImPlot::Annotation(tx, ty, ImVec4(0.9f, 0.7f, 0.0f, 1.0f), ImVec2(10, 10), true, "%s", lbl);
+                      }
+                  }
+
+                  // Clear the selection boundary if Confirmed
+                  if (cancel_roi) {
+                      ImPlot::CancelPlotSelection();
+                      cancel_roi = false;
+                  }
+
+                  // Check if user is currently drawing/has drawn a box
+                  if (ImPlot::IsPlotSelected()) {
+                      has_selection = true;
+                      selection = ImPlot::GetPlotSelection();
+                  }
+
+                  ImPlot::EndPlot();
+              }
+
+              // -------------------------------------------------------------
+              // ROI CONFIRMATION (Supports both Zooming and Selection Box!)
+              // -------------------------------------------------------------
+              if (has_selection) {
+                  ImGui::TextColored(ImVec4(1, 1, 0, 1), "Selection Box: X [%.3f, %.3f]  |  Y [%.3f, %.3f]", 
+                      selection.X.Min, selection.X.Max, selection.Y.Min, selection.Y.Max);
+                      
+                  ImGui::SameLine();
+                  if (ImGui::Button("Apply Selection as ROI", ImVec2(-1, 0))) {
+                      stage2_params_.use_roi = true;
+                      stage2_params_.roi_dx_min = ::std::max(0.0f, static_cast<float>(selection.X.Min));
+                      stage2_params_.roi_dx_max = ::std::min(static_cast<float>(ctx_.lx / 2.0), static_cast<float>(selection.X.Max));
+                      stage2_params_.roi_dy_min = ::std::max(0.0f, static_cast<float>(selection.Y.Min));
+                      stage2_params_.roi_dy_max = ::std::min(static_cast<float>((ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0), static_cast<float>(selection.Y.Max));
+                      stage2_params_.step_size_m = 0.001f; 
+                      
+                      cancel_roi = true; 
+                  }
+              } else if (has_limits) {
+                  ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "Current Viewport: X [%.3f, %.3f]  |  Y [%.3f, %.3f]", 
+                      limits.X.Min, limits.X.Max, limits.Y.Min, limits.Y.Max);
+                      
+                  ImGui::SameLine();
+                  if (ImGui::Button("Capture Current View as ROI", ImVec2(-1, 0))) {
+                      stage2_params_.use_roi = true;
+                      stage2_params_.roi_dx_min = ::std::max(0.0f, static_cast<float>(limits.X.Min));
+                      stage2_params_.roi_dx_max = ::std::min(static_cast<float>(ctx_.lx / 2.0), static_cast<float>(limits.X.Max));
+                      stage2_params_.roi_dy_min = ::std::max(0.0f, static_cast<float>(limits.Y.Min));
+                      stage2_params_.roi_dy_max = ::std::min(static_cast<float>((ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0), static_cast<float>(limits.Y.Max));
+                      stage2_params_.step_size_m = 0.001f; 
+                  }
+              }
+
+          } else {
+              ImGui::Text("Waiting for matrix data... Run Stage 2 or Load a File to view the Heatmap.");
+          }
+          ImGui::EndTabItem();
+      }
+      ImGui::EndTabBar();
   }
   ImGui::End();
-}
-
-void Application::render_3d_viewport() {
-    ImGui::Begin("3D Deformation");
-    ImVec2 size = ImGui::GetContentRegionAvail();
-    ImGui::Image((void*)(intptr_t)f_texture_, size, ImVec2(0, 1), ImVec2(1, 0));
-    ImGui::End();
 }
 
 void Application::render_sweeper_tab() {
@@ -581,4 +646,3 @@ void Application::start_batch_plotting(const ::std::string& json_path, const ::s
 }
 
 } // namespace chladni
-

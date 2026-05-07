@@ -10,6 +10,7 @@
 #include <future>
 #include <atomic>
 #include <vector>
+#include <nlohmann/json.hpp>
 #include "core/physics.h"
 #include "core/analyzer.h"
 
@@ -36,9 +37,12 @@ class Application {
   void snap_to_resonance(int direction);
   void apply_preset(const ::std::string& name);
   void save_screenshot(const ::std::string& filename);
-  void start_batch_plotting(const ::std::string& csv_path, const ::std::string& output_dir);
+  void start_batch_plotting(const ::std::string& json_path, const ::std::string& output_dir);
 
   ::std::shared_ptr<PhysicsEngine> get_physics() { return physics_; }
+
+  // Shared UI Params
+  GridParams stage2_params_;
 
  private:
   bool init();
@@ -48,11 +52,15 @@ class Application {
   void render_viewport();
   void render_pure_viewport(const nlohmann::json& symbol);
   void render_panels();
-  void render_3d_viewport();
   void render_sweeper_tab();
 
   void update_texture();
   
+  // Simulation File System
+  ::std::vector<::std::string> available_sim_files_;
+  int selected_sim_file_idx_ = 0;
+  void refresh_sim_files();
+
   // Batch State
   bool is_batch_running_ = false;
   float batch_progress_ = 0.0f;
@@ -91,18 +99,6 @@ class Application {
   float sweep_end_ = 5000.0f;
   float sweep_step_ = 10.0f;
   double last_sweep_tick_ = 0;
-
-  // 3D Rendering (OpenGL)
-  unsigned int surface_vao_ = 0, surface_vbo_ = 0, surface_ebo_ = 0;
-  unsigned int shader_program_ = 0;
-  unsigned int fbo_ = 0, f_texture_ = 0, rbo_ = 0;
-  int mesh_res_ = 100; // Lower res for 3D mesh performance
-  ::std::vector<float> mesh_vertices_;
-  ::std::vector<unsigned int> mesh_indices_;
-
-  void init_3d_resources();
-  void update_3d_mesh();
-  void draw_3d_mesh();
 };
 
 } // namespace chladni

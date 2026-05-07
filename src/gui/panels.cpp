@@ -27,7 +27,7 @@ void Panels::draw_main_ui(SimulationContext& ctx, Application* app, Analyzer& an
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Stage 2: Symmetric Explorer")) {
-            draw_stage2_grid(ctx, analyzer);
+            draw_stage2_grid(ctx, analyzer, app);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Stage 3: Variable Sweep")) {
@@ -71,7 +71,17 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
 
     if (ImGui::CollapsingHeader("Simulation Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::SliderFloat("Frequency (Hz)", &current_freq, 20.0f, f_max);
-        ImGui::InputFloat("Max Range", &f_max);
+        ImGui::InputFloat("Sweep Max Limit", &f_max);
+        
+        ImGui::Separator();
+        
+        int n_modes = ctx.n_modes;
+        if (ImGui::SliderInt("Modes Resolution", &n_modes, 5, 40)) {
+            ctx.n_modes = n_modes;
+        }
+        ImGui::InputDouble("Hardware Cutoff Limit (Hz)", &ctx.max_frequency);
+
+        ImGui::Separator();
         if (ImGui::Button("Prev Peak")) app->snap_to_resonance(-1);
         ImGui::SameLine();
         if (ImGui::Button("Next Peak")) app->snap_to_resonance(1);
@@ -84,6 +94,15 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
     }
 
     if (ImGui::CollapsingHeader("Transducers", ImGuiTreeNodeFlags_DefaultOpen)) {
+        
+        double tr_mm = ctx.transducer_radius_m * 1000.0;
+        if (ImGui::InputDouble("Transducer Radius (mm)", &tr_mm)) ctx.transducer_radius_m = ::std::max(1.0, tr_mm) / 1000.0;
+        
+        double ts_mm = ctx.transducer_spacing_m * 1000.0;
+        if (ImGui::InputDouble("Min Spacing Gap (mm)", &ts_mm)) ctx.transducer_spacing_m = ::std::max(0.0, ts_mm) / 1000.0;
+
+        ImGui::Separator();
+
         if (ImGui::Button("1-Center")) app->apply_preset("1-center");
         ImGui::SameLine();
         if (ImGui::Button("4-Corners")) app->apply_preset("4-corners");
@@ -109,10 +128,10 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
                 ImGui::InputDouble("Digital Amp ##Text", &ctx.transducers[i].amplitude);
                 ctx.transducers[i].amplitude = ::std::clamp(ctx.transducers[i].amplitude, 0.0, 1.0);
                 
-                float deg = (float)(ctx.transducers[i].phase_rad * 180.0 / M_PI);
-                if (ImGui::SliderFloat("Phase (°)", &deg, 0, 360)) ctx.transducers[i].phase_rad = (double)deg * M_PI / 180.0;
-                double deg_d = (double)deg;
-                if (ImGui::InputDouble("Phase (°) ##Text", &deg_d)) ctx.transducers[i].phase_rad = deg_d * M_PI / 180.0;
+                double deg = (ctx.transducers[i].phase_rad * 180.0 / M_PI);
+                double min_deg = 0.0, max_deg = 360.0;
+                if (ImGui::SliderScalar("Phase (°)", ImGuiDataType_Double, &deg, &min_deg, &max_deg)) ctx.transducers[i].phase_rad = deg * M_PI / 180.0;
+                if (ImGui::InputDouble("Phase (°) ##Text", &deg)) ctx.transducers[i].phase_rad = deg * M_PI / 180.0;
                 
                 if (changed) app->get_physics()->clamp_transducer(ctx.transducers[i], ctx);
                 
@@ -122,63 +141,101 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
     }
 }
 
-void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer) {
-    static GridParams params;
-    static ::std::vector<LayoutResult> top_layouts;
-    static ::std::future<::std::vector<LayoutResult>> grid_future;
-    static bool is_running = false;
-
-    double lx = ctx.lx;
-    double ly = (ctx.geometry == Geometry::kCircular) ? ctx.lx : ctx.ly;
-    double dx_start = 0.025, dx_end = lx / 2.0 - params.edge_gap_m;
-    double dy_start = 0.025, dy_end = ly / 2.0 - params.edge_gap_m;
+void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer, Application* app) {
+    GridParams& params = app->stage2_params_; 
     
-    int nx = (dx_end < dx_start) ? 0 : static_cast<int>((dx_end - dx_start)/params.step_size_m + 1);
-    int ny = (dy_end < dy_start) ? 0 : static_cast<int>((dy_end - dy_start)/params.step_size_m + 1);
-    int total_iterations = nx * ny;
+    float active_radius_m = static_cast<float>(ctx.transducer_radius_m);
+    float min_spacing_m = static_cast<float>(ctx.transducer_spacing_m);
+    float absolute_min_offset = active_radius_m + (min_spacing_m / 2.0f);
+    
+    if (params.start_offset_m < absolute_min_offset) params.start_offset_m = absolute_min_offset;
+    if (params.edge_gap_m < 0.0f) params.edge_gap_m = 0.0f;
+    
+    static ::std::future<::std::vector<LayoutResult>> grid_future;
 
-    if (ImGui::CollapsingHeader("Explorer Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
-        double step_mm = params.step_size_m * 1000.0;
-        if (ImGui::InputDouble("Step Size (mm)", &step_mm)) params.step_size_m = ::std::max(1.0, step_mm) / 1000.0;
+    if (ImGui::CollapsingHeader("Explorer Mode Control", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (params.use_roi) {
+            ImGui::TextColored(ImVec4(1, 1, 0, 1), "ACTIVE: FOCUSED ROI SWEEP");
+            ImGui::Text("X Bounds: [%.3f, %.3f] m", params.roi_dx_min, params.roi_dx_max);
+            ImGui::Text("Y Bounds: [%.3f, %.3f] m", params.roi_dy_min, params.roi_dy_max);
+            ImGui::Spacing();
+            if (ImGui::Button("Clear ROI / Return to Full Plate", ImVec2(-1, 0))) {
+                params.use_roi = false;
+                params.step_size_m = 0.015f; 
+            }
+        } else {
+            ImGui::TextColored(ImVec4(0, 1, 0, 1), "ACTIVE: FULL PLATE MACRO SWEEP");
+            
+            float offset_mm = params.start_offset_m * 1000.0f;
+            if (ImGui::InputFloat("Keep-out Core Radius (mm)", &offset_mm)) params.start_offset_m = ::std::max(absolute_min_offset, offset_mm / 1000.0f);
+            
+            float gap_mm = params.edge_gap_m * 1000.0f;
+            if (ImGui::InputFloat("Plate Edge Gap Margin (mm)", &gap_mm)) params.edge_gap_m = ::std::max(0.0f, gap_mm / 1000.0f);
+            
+            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Note: Use Heatmap tab to generate ROI.");
+        }
         
-        double gap_mm = params.edge_gap_m * 1000.0;
-        if (ImGui::InputDouble("Edge Gap (mm)", &gap_mm)) params.edge_gap_m = ::std::max(0.0, gap_mm) / 1000.0;
-        
-        ImGui::Text("Estimated Iterations: %d (%d x %d grid)", total_iterations, nx, ny);
+        ImGui::Separator();
+        float step_mm = params.step_size_m * 1000.0f;
+        if (ImGui::InputFloat("Resolution Step Size (mm)", &step_mm)) params.step_size_m = ::std::max(1.0f, step_mm) / 1000.0f;
     }
 
-    if (is_running) {
-        if (grid_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
-            top_layouts = grid_future.get();
-            is_running = false;
-        }
-        char overlay[128];
-        ::std::snprintf(overlay, sizeof(overlay), "Best Alphabet: %d", analyzer.get_grid_best_alphabet());
-        ImGui::ProgressBar(analyzer.get_grid_progress(), ImVec2(-1, 0), overlay);
-        if (ImGui::Button("Cancel Search", ImVec2(-1, 0))) {
-            is_running = false; 
-        }
+    float lx = static_cast<float>(ctx.lx);
+    float ly = static_cast<float>((ctx.geometry == Geometry::kCircular) ? ctx.lx : ctx.ly);
+    
+    float dx_start = params.use_roi ? params.roi_dx_min : params.start_offset_m;
+    float dy_start = params.use_roi ? params.roi_dy_min : params.start_offset_m;
+    float dx_end = params.use_roi ? params.roi_dx_max : (lx / 2.0f - params.edge_gap_m - active_radius_m);
+    float dy_end = params.use_roi ? params.roi_dy_max : (ly / 2.0f - params.edge_gap_m - active_radius_m);
+    
+    if (dx_end < dx_start) dx_end = dx_start;
+    if (dy_end < dy_start) dy_end = dy_start;
+
+    int nx = ::std::max(1, (int)::std::floor((dx_end - dx_start) / params.step_size_m) + 1);
+    int ny = ::std::max(1, (int)::std::floor((dy_end - dy_start) / params.step_size_m) + 1);
+    int layouts_per_point = (ctx.transducers.size() == 2) ? 4 : (ctx.transducers.size() == 4 ? 2 : 1);
+    if (ctx.transducers.size() == 3) layouts_per_point = 1;
+    
+    int total_layouts_est = nx * ny * layouts_per_point;
+    int expected_modes_est = total_layouts_est * (ctx.n_modes * ctx.n_modes);
+
+    ImGui::Separator();
+    ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Simulation Predictor Dashboard:");
+    ImGui::Text("Search Grid: %d x %d nodes", nx, ny);
+    ImGui::Text("Layouts to Evaluate: ~%d variations", total_layouts_est);
+    ImGui::Text("Complexity: ~%d distinct Matrix Solves", expected_modes_est);
+    ImGui::Separator();
+
+    if (analyzer.is_analyzing()) {
+        char overlay1[128]; ::std::snprintf(overlay1, sizeof(overlay1), "Matrix Positions Analyzed: %.1f%%", analyzer.get_grid_progress() * 100.0f);
+        ImGui::ProgressBar(analyzer.get_grid_progress(), ImVec2(-1, 0), overlay1);
+
+        char overlay2[128]; ::std::snprintf(overlay2, sizeof(overlay2), "Mode Calculations: %.1f%%", analyzer.get_grid_sub_progress() * 100.0f);
+        ImGui::ProgressBar(analyzer.get_grid_sub_progress(), ImVec2(-1, 0), overlay2);
+
+        ImGui::TextColored(ImVec4(0, 1, 0, 1), "Best Alphabet Discovered: %d symbols", analyzer.get_grid_best_alphabet());
     } else {
-        if (ImGui::Button("Run Symmetric Grid Search", ImVec2(-1, 40))) {
+        if (grid_future.valid() && grid_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
+            grid_future.get(); // Resolve promise
+        }
+
+        if (ImGui::Button(params.use_roi ? "Execute Fine Sweep on ROI" : "Execute Coarse Map of Full Plate", ImVec2(-1, 40))) {
             GridParams p = params;
             grid_future = ::std::async(::std::launch::async, [&analyzer, ctx, p]() {
                 return analyzer.run_symmetric_grid_search(ctx, p);
             });
-            is_running = true;
         }
     }
 
+    // NEW: Always pull from Analyzer memory, seamlessly merging active runs and loaded JSONs!
+    const auto& top_layouts = analyzer.get_top_layouts();
     if (!top_layouts.empty()) {
         ImGui::Separator();
-        ImGui::Text("Top Discovered Symmetric Layouts:");
+        ImGui::Text("Top Discovered Layout Configurations:");
         for (size_t i = 0; i < top_layouts.size(); ++i) {
-            ImGui::Text("Layout #%d (Alphabet: %d)", (int)i+1, top_layouts[i].alphabet_size);
+            ImGui::Text("Rank #%d: Alphabet: %d | Config: %s", (int)i+1, top_layouts[i].alphabet_size, top_layouts[i].layout_type.c_str());
             ImGui::SameLine();
-            if (ImGui::Button(("Preview on Plate##" + ::std::to_string(i)).c_str())) {
-                ctx.transducers = top_layouts[i].best_layout;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button(("Lock In Layout##" + ::std::to_string(i)).c_str())) {
+            if (ImGui::Button(("Push to Hardware##" + ::std::to_string(i)).c_str())) {
                 ctx.transducers = top_layouts[i].best_layout;
             }
         }
@@ -191,20 +248,18 @@ void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
     
     static ::std::vector<LayoutResult> sweep_results;
     static ::std::future<::std::vector<LayoutResult>> sweep_future;
-    static bool is_sweeping = false;
 
-    if (is_sweeping) {
-        if (sweep_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
-            sweep_results = sweep_future.get();
-            is_sweeping = false;
-        }
+    if (analyzer.is_analyzing()) {
         ImGui::ProgressBar(analyzer.get_sweep_progress(), ImVec2(-1, 0), "Sweeping Modes...");
     } else {
+        if (sweep_future.valid() && sweep_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
+            sweep_results = sweep_future.get();
+        }
+
         if (ImGui::Button("Run Sensitivity Sweep", ImVec2(-1, 40))) {
             sweep_future = ::std::async(::std::launch::async, [&analyzer, ctx]() {
                 return analyzer.run_sensitivity_sweep(ctx);
             });
-            is_sweeping = true;
         }
     }
 
@@ -307,8 +362,8 @@ void Panels::draw_stage5_calibration(SimulationContext& ctx) {
             double n = static_cast<double>(points.size());
             double denominator = (n * sum_x2 - sum_x * sum_x);
             if (::std::abs(denominator) > 1e-9) {
-                ctx.calib_m = (n * sum_xy - sum_x * sum_y) / denominator;
-                ctx.calib_b = (sum_y - ctx.calib_m * sum_x) / n;
+                ctx.calib_m = static_cast<float>((n * sum_xy - sum_x * sum_y) / denominator);
+                ctx.calib_b = static_cast<float>((sum_y - ctx.calib_m * sum_x) / n);
             }
         }
     }
@@ -319,8 +374,8 @@ void Panels::draw_stage5_calibration(SimulationContext& ctx) {
     ImGui::Text("f_actual = %.6f * f_theoretical + %.2f", ctx.calib_m, ctx.calib_b);
     
     if (ImGui::Button("Reset to Ideal (1.0, 0.0)")) {
-        ctx.calib_m = 1.0;
-        ctx.calib_b = 0.0;
+        ctx.calib_m = 1.0f;
+        ctx.calib_b = 0.0f;
     }
 }
 

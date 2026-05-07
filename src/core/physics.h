@@ -16,7 +16,6 @@
 
 namespace chladni {
 
-const double kMinClearanceMeters = 0.055;
 const double kGForce = 9.81;
 
 enum class Geometry { kSquare, kRectangular, kCircular };
@@ -39,11 +38,17 @@ struct SimulationContext {
   double nu;
   double damping;
   int n_modes;
+  double max_frequency = 20000.0;
   int sign;
   double base_volume_1 = 1.0;
   double base_volume_2 = 1.0;
   double calib_m = 1.0;
   double calib_b = 0.0;
+  
+  // Dynamic hardware constraints
+  double transducer_radius_m = 0.025;
+  double transducer_spacing_m = 0.005;
+
   ::std::vector<Transducer> transducers;
   VibrationSpeaker speaker;
 };
