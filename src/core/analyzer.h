@@ -30,7 +30,6 @@ struct LayoutResult {
   float grid_dx = 0.0f;
   float grid_dy = 0.0f;
   
-  // NEW: Tracking Auto-Tuner metrics (Clipping is allowed, just marked)
   float achieved_g = 0.0f;
   float required_power_w = 0.0f;
   float required_digital_amp = 0.0f;
@@ -79,6 +78,9 @@ class Analyzer {
   const ::std::vector<LayoutResult>& get_top_layouts() const { return top_layouts_; }
   void clear_heatmap() { heatmap_.valid = false; heatmap_.scores.clear(); top_layouts_.clear(); }
 
+  const ::std::vector<LayoutResult>& get_sweep_results() const { return sweep_results_; }
+  void load_sweep_results(const ::std::string& filepath, SimulationContext& ctx);
+
   float get_grid_progress() const { return grid_progress_.load(); }
   float get_grid_sub_progress() const { 
       return expected_modes_.load() > 0 ? (float)modes_evaluated_.load() / expected_modes_.load() : 0.0f; 
@@ -93,6 +95,7 @@ class Analyzer {
   
   HeatmapData heatmap_;
   ::std::vector<LayoutResult> top_layouts_;
+  ::std::vector<LayoutResult> sweep_results_;
 
   ::std::atomic<float> grid_progress_{0.0f};
   ::std::atomic<int> modes_evaluated_{0};
@@ -103,7 +106,9 @@ class Analyzer {
 
   bool validate_layout(const ::std::vector<Transducer>& layout);
   LayoutResult evaluate_layout(const ::std::vector<Transducer>& layout, const SimulationContext& base_ctx);
-  void auto_export_sim_results(const SimulationContext& ctx);
+  
+  void auto_export_grid_results(const SimulationContext& ctx);
+  void auto_export_sweep_results(const SimulationContext& ctx);
 };
 
 } // namespace chladni

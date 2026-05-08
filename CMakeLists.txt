@@ -6,10 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ── Dependencies ─────────────────────────────────────────────────────────────
 
-# Eigen3
-find_package(Eigen3 3.3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-
 # OpenGL
 find_package(OpenGL REQUIRED)
 
@@ -22,6 +18,12 @@ add_definitions(-DGL_GLEXT_PROTOTYPES)
 # ── Third Party ──────────────────────────────────────────────────────────────
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+
+# Eigen3 (Header only, local)
+include_directories(${THIRD_PARTY_DIR}/eigen)
+
+# Nlohmann JSON (Header only, local)
+include_directories(${THIRD_PARTY_DIR})
 
 # GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -76,7 +78,6 @@ add_executable(chladni_sim ${ALL_SOURCES})
 
 target_link_libraries(chladni_sim
     glfw
-    Eigen3::Eigen
     ${OPENGL_LIBRARIES}
     Threads::Threads
     dl

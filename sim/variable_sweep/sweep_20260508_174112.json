@@ -1,0 +1,5752 @@
+[
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_191",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 190.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 190.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 190.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 190.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 1,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_191.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_293",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 293.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 293.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 293.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 293.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 2,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_293.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_422",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 422.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 422.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 422.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 422.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 3,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_422.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_449",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 448.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 448.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 448.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 448.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 4,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_449.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_525",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 525.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 525.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 525.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 525.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 5,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_525.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_656",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 655.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 655.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 655.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 655.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 6,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_656.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_680",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 680.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 680.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 680.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 680.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 7,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_680.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_772",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 771.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 771.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 771.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 771.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 8,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_772.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_874",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 874.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 874.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 874.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 874.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 9,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_874.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_887",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 887.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 887.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 887.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 887.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 10,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_887.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_914",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 914.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 914.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 914.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 914.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 11,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_914.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1029",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1029.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1029.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1029.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1029.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 12,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1029.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1146",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1145.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1145.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1145.8,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1145.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 13,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1146.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1237",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1236.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1236.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1236.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1236.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 14,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1237.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1238",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1237.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1237.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1237.8,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1237.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 15,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1238.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1340",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1339.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1339.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1339.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1339.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 16,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1340.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1457",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1457.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1457.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1457.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1457.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 17,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1457.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1495",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1494.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1494.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1494.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1494.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 18,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1495.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1496",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1496.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1496.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1496.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1496.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 19,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1496.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1586",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1585.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1585.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1585.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1585.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 20,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1586.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1701",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1700.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1700.8,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1700.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1700.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 21,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1701.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1817",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1817.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1817.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1817.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1817.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 22,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1817.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1819",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1818.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1818.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1818.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1818.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 23,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1819.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1923",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1922.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1922.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1922.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1922.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 24,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1923.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_1961",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 1960.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 1960.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 1960.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 1960.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 25,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_1961.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2079",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2078.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2078.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2078.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2078.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 26,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2079.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2231",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2231.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2231.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2231.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2231.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 27,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2231.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2283",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2283.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2283.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2283.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2283.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 28,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2283.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2543",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2542.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2542.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2542.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2542.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 29,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2543.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2581",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2581.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2581.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2581.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2581.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 30,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2581.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2618",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2618.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2618.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2618.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2618.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 31,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2618.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2637",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2637.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2637.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2637.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2637.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 32,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2637.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2696",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2696.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2696.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2696.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2696.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 33,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2696.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_2854",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 2854.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 2854.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 2854.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 2854.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 34,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_2854.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3044",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3043.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3043.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3043.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3043.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 35,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3044.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3213",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3213.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3213.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3213.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3213.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 36,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3213.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3242",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3241.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3241.8,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3241.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3241.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 37,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3242.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3507",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3507.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3507.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3507.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3507.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 38,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3507.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3548",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3547.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3547.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3547.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3547.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 39,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3548.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3552",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3551.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3551.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3551.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3551.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 40,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3552.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3627",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3627.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3627.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3627.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3627.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 41,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3627.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_3783",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 3783.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 3783.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 3783.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 3783.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 42,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_3783.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4029",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4028.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4028.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4028.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4028.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 43,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4029.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4094",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4094.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4094.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4094.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4094.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 44,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4094.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4176",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4175.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4175.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4175.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4175.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 45,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4176.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4258",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4258.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4258.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4258.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4258.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 46,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4258.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4362",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4362.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4362.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4362.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4362.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 47,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4362.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4603",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4602.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4602.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4602.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4602.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 48,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4603.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4608",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4607.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4607.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4607.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4607.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 49,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4608.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4717",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4717.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4717.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4717.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4717.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 50,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4717.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4729",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4728.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4728.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4728.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4728.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 51,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4729.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_4986",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 4986.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 4986.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 4986.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 4986.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 52,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_4986.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5178",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5177.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5177.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5177.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5177.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 53,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5178.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5303",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5303.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5303.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5303.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5303.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 54,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5303.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5316",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5316.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5316.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5316.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5316.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 55,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5316.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5410",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5410.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5410.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5410.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5410.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 56,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5410.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5614",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5614.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5614.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5614.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5614.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 57,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5614.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5654",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5653.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5653.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5653.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5653.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 58,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5654.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5798",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5798.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5798.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5798.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5798.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 59,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5798.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_5799",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 5798.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 5798.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 5798.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 5798.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 60,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_5799.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_6029",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 6029.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 6029.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 6029.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 6029.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 61,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_6029.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_6151",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 6151.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 6151.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 6151.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 6151.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 62,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_6151.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_6576",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 6576.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 6576.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 6576.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 6576.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 63,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_6576.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_6577",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 6576.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 6576.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 6576.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 6576.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 64,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_6577.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_6697",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 6696.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 6696.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 6696.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 6696.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 65,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_6697.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7047",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7047.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7047.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7047.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7047.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 66,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7047.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7198",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7198.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7198.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7198.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7198.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 67,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7198.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7376",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7376.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7376.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7376.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7376.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 68,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7376.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7622",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7622.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7622.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7622.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7622.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 69,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7622.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7859",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7859.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7859.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7859.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7859.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 70,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7859.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7888",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7888.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7888.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7888.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7888.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 71,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7888.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_7971",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 7970.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 7970.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 7970.6,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 7970.6,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 72,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_7971.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8253",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8253.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8253.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8253.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8253.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 73,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8253.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8482",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8481.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8481.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8481.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8481.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 74,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8482.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8676",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8676.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8676.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8676.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8676.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 75,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8676.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8678",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8678.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8678.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8678.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8678.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 76,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8678.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8707",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8707.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8707.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8707.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8707.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 77,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8707.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_8894",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 8893.8,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 8893.8,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 8893.8,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 8893.8,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 78,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_8894.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_9156",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 9156.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 9156.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 9156.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 9156.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 79,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_9156.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_9566",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 9566.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 9566.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 9566.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 9566.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 80,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_9566.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_9630",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 9629.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 9629.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 9629.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 9629.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 81,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_9630.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_9863",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 9862.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 9862.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 9862.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 9862.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 82,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_9863.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_10028",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 10028.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 10028.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 10028.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 10028.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 83,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_10028.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_10429",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 10429.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 10429.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 10429.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 10429.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 84,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_10429.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_10557",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 10557.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 10557.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 10557.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 10557.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 85,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_10557.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_10689",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 10689.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 10689.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 10689.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 10689.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 86,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_10689.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_10962",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 10962.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 10962.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 10962.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 10962.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 87,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_10962.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_11111",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 11110.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 11110.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 11110.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 11110.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 88,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_11111.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_11435",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 11434.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 11434.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 11434.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 11434.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 89,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_11435.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_11470",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 11470.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 11470.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 11470.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 11470.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 90,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_11470.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_11742",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 11741.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 11741.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 11741.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 11741.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 91,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_11742.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_12399",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 12399.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 12399.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 12399.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 12399.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 92,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_12399.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_12405",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 12404.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 12404.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 12404.6,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 12404.6,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 93,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_12405.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_12525",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 12525.5,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 12525.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 12525.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 12525.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 94,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_12525.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_12735",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 12735.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 12735.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 12735.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 12735.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 95,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_12735.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_13007",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 13007.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 13007.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 13007.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 13007.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 96,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_13007.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_13110",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 13110.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 13110.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 13110.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 13110.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 97,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_13110.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_13905",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 13905.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 13905.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 13905.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 13905.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 98,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_13905.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_14100",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 14100.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 14100.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 14100.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 14100.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 99,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_14100.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_14146",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 14146.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 14146.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 14146.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 14146.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 100,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_14146.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_14540",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 14540.4,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 14540.4,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 14540.4,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 14540.4,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 101,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_14540.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_14753",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 14752.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 14752.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 14752.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 14752.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 102,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_14753.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_15281",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 15281.0,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 15281.0,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 15281.0,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 15281.0,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 103,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_15281.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_15659",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 15658.7,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 15658.7,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 15658.7,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 15658.7,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 104,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_15659.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_15839",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 15838.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 15838.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 15838.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 15838.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 105,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_15839.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_16056",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 16056.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 16056.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 16056.5,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 16056.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 106,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_16056.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_16283",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 16283.3,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 16283.3,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 16283.3,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 16283.3,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 107,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_16283.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_16326",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 16326.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 16326.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 16326.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 16326.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 108,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_16326.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_16930",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 16930.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 16930.1,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 16930.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 16930.1,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 109,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_16930.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_17392",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 17391.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 17391.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 17391.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 17391.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 110,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_17392.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_17665",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 17665.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 17665.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 17665.2,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 17665.2,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 111,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_17665.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_18026",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 18026.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 18026.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 18026.2,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 18026.2,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 112,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_18026.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_18445",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 18444.9,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 18444.9,
+                    "phase_deg": 180,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 18444.9,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 18444.9,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 113,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_18445.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_18676",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 18675.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 18675.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 18675.5,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 18675.5,
+                    "phase_deg": 0,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 114,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_18676.png"
+        }
+    },
+    {
+        "achieved_g": 5.0,
+        "display_name": "CHLADNI_19411",
+        "hardware_config": {
+            "channels": [
+                {
+                    "amplitude": 0.0,
+                    "channel": 1,
+                    "frequency_hz": 19411.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 2,
+                    "frequency_hz": 19411.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": 0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 3,
+                    "frequency_hz": 19411.1,
+                    "phase_deg": 0,
+                    "x": -0.053,
+                    "y": -0.036
+                },
+                {
+                    "amplitude": 0.0,
+                    "channel": 4,
+                    "frequency_hz": 19411.1,
+                    "phase_deg": 180,
+                    "x": 0.053,
+                    "y": -0.036
+                }
+            ],
+            "hardware_amp_gain": 0.8,
+            "max_power_w": 25.0
+        },
+        "id": 115,
+        "physical_parameters": {
+            "settling_time_ms": null
+        },
+        "required_power_w": 0.0,
+        "ui_metadata": {
+            "image_path": "./dictionary/CHLADNI_19411.png"
+        }
+    }
+]

@@ -40,8 +40,15 @@ struct SimulationContext {
   int n_modes;
   double max_frequency = 20000.0;
   int sign;
+  
+  // Frequency Calibration
   double calib_m = 1.0;
   double calib_b = 0.0;
+  
+  // Empirical Power Curve Calibration (Power_1G = A*f^2 + B*f + C)
+  double p_A = 0.0;
+  double p_B = 0.0;
+  double p_C = 1.0;
   
   double transducer_radius_m = 0.025;
   double transducer_spacing_m = 0.005;

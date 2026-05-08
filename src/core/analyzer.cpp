@@ -24,9 +24,7 @@ namespace chladni {
 Analyzer::Analyzer(::std::shared_ptr<PhysicsEngine> physics) : physics_(physics) {}
 
 void Analyzer::repair_layout(::std::vector<Transducer>& layout, const SimulationContext& ctx) {
-    for (auto& t : layout) {
-        physics_->clamp_transducer(t, ctx);
-    }
+    for (auto& t : layout) { physics_->clamp_transducer(t, ctx); }
     float min_clearance = (2.0f * ctx.transducer_radius_m) + ctx.transducer_spacing_m;
     bool violation = true;
     int max_iterations = 10;
@@ -92,8 +90,6 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
                 eval_ctx.transducers[i].amplitude = couplings[i] / max_c;
             }
 
-            if (!physics_->validate_power(base_freq, eval_ctx)) continue;
-            
             feasible_count++;
 
             double best_f = base_freq;
@@ -103,11 +99,7 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
             for (double f = base_freq - 10.0; f <= base_freq + 10.0; f += 10.0) {
                 Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
                 double peak = resp.array().abs().maxCoeff();
-                if (peak > max_peak) {
-                    max_peak = peak;
-                    best_f = f;
-                    best_resp = std::move(resp);
-                }
+                if (peak > max_peak) { max_peak = peak; best_f = f; best_resp = std::move(resp); }
             }
 
             double freq = best_f;
@@ -120,7 +112,6 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
                     double dot = (energy.array() * it->energy.array()).sum();
                     double norm_prod = ::std::sqrt((energy.array().pow(2)).sum()) * ::std::sqrt((it->energy.array().pow(2)).sum());
                     double similarity = (norm_prod > 1e-12) ? dot / norm_prod : 0.0;
-                    
                     if (similarity > 0.85) { 
                         if (total_disp > it->total_disp) { it = unique_modes.erase(it); continue; } 
                         else { unique = false; break; }
@@ -154,7 +145,6 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
 
     float dx_start = params.use_roi ? params.roi_dx_min : params.start_offset_m;
     float dy_start = params.use_roi ? params.roi_dy_min : params.start_offset_m;
-    
     float dx_end = params.use_roi ? params.roi_dx_max : (lx / 2.0f - params.edge_gap_m - active_radius_m);
     float dy_end = params.use_roi ? params.roi_dy_max : (ly / 2.0f - params.edge_gap_m - active_radius_m);
 
@@ -268,22 +258,22 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
     if (candidates.size() > 10) candidates.resize(10);
     top_layouts_ = candidates; 
     
-    auto_export_sim_results(base_ctx); 
+    auto_export_grid_results(base_ctx); 
 
     grid_progress_ = 1.0f;
     is_analyzing_ = false;
     return top_layouts_;
 }
 
-void Analyzer::auto_export_sim_results(const SimulationContext& ctx) {
+void Analyzer::auto_export_grid_results(const SimulationContext& ctx) {
     try {
-        ::std::filesystem::create_directories("./sim");
+        ::std::filesystem::create_directories("../sim/transducer_analysis");
         auto now = ::std::chrono::system_clock::now();
         ::std::time_t now_time = ::std::chrono::system_clock::to_time_t(now);
         char timestamp[64];
         ::std::strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", ::std::localtime(&now_time));
 
-        ::std::string filename = "./sim/sim_results_" + ::std::string(timestamp) + ".json";
+        ::std::string filename = "../sim/transducer_analysis/grid_" + ::std::string(timestamp) + ".json";
         nlohmann::json root;
         
         char display_time[64];
@@ -326,12 +316,24 @@ void Analyzer::auto_export_sim_results(const SimulationContext& ctx) {
 
         ::std::ofstream file(filename);
         if (file.is_open()) file << root.dump(4);
-    } catch (...) { /* Silent fail for file IO */ }
+    } catch (...) {}
+}
+
+void Analyzer::auto_export_sweep_results(const SimulationContext& ctx) {
+    try {
+        ::std::filesystem::create_directories("../sim/variable_sweep");
+        auto now = ::std::chrono::system_clock::now();
+        ::std::time_t now_time = ::std::chrono::system_clock::to_time_t(now);
+        char timestamp[64];
+        ::std::strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", ::std::localtime(&now_time));
+
+        ::std::string filename = "../sim/variable_sweep/sweep_" + ::std::string(timestamp) + ".json";
+        export_to_json(filename, sweep_results_, ctx);
+    } catch (...) {}
 }
 
 bool Analyzer::load_sim_results(const ::std::string& filepath, SimulationContext& ctx) {
-    (void)ctx; // Silence warning
-    
+    (void)ctx; 
     ::std::ifstream file(filepath);
     if (!file.is_open()) return false;
     
@@ -386,6 +388,43 @@ bool Analyzer::load_sim_results(const ::std::string& filepath, SimulationContext
     return true;
 }
 
+void Analyzer::load_sweep_results(const ::std::string& filepath, SimulationContext& ctx) {
+    (void)ctx;
+    ::std::ifstream file(filepath);
+    if (!file.is_open()) return;
+    
+    nlohmann::json root;
+    try { file >> root; } catch(...) { return; }
+
+    sweep_results_.clear();
+    if (!root.is_array()) return;
+
+    for (const auto& symbol : root) {
+        LayoutResult res;
+        res.layout_type = symbol.value("display_name", "Loaded");
+        res.alphabet_size = 1;
+        res.total_displacement = 0.0;
+        res.achieved_g = symbol.value("achieved_g", 0.0f);
+        res.required_power_w = symbol.value("required_power_w", 0.0f);
+        res.required_digital_amp = 1.0f;
+        res.is_clipping = false;
+
+        if (symbol.contains("hardware_config") && symbol["hardware_config"].contains("channels")) {
+            for (const auto& ch : symbol["hardware_config"]["channels"]) {
+                Transducer t;
+                t.x = ch.value("x", 0.0);
+                t.y = ch.value("y", 0.0);
+                t.frequency = ch.value("frequency_hz", 0.0);
+                t.amplitude = ch.value("amplitude", 0.0);
+                double deg = ch.value("phase_deg", 0.0);
+                t.phase_rad = deg * M_PI / 180.0;
+                res.best_layout.push_back(t);
+            }
+        }
+        sweep_results_.push_back(res);
+    }
+}
+
 void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<LayoutResult>& results, const SimulationContext& ctx) { 
     auto round_to = [](double val, int decimals) {
         double p = ::std::pow(10, decimals);
@@ -404,9 +443,10 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         symbol["id"] = current_id++;
         symbol["display_name"] = "CHLADNI_" + ::std::to_string(freq_int);
         
-        nlohmann::json hw_config;
+        symbol["achieved_g"] = round_to(res.achieved_g, 2);
+        symbol["required_power_w"] = round_to(res.required_power_w, 4); 
         
-        // FIXED: Exporting the correct constant Hardware Amp Gain replacing base_volumes
+        nlohmann::json hw_config;
         hw_config["hardware_amp_gain"] = round_to(ctx.hardware_amp_gain, 3);
         hw_config["max_power_w"] = round_to(ctx.transducer_max_power_w, 3);
         
@@ -424,7 +464,7 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
             if (rounded_phase < 0) rounded_phase += 360;
             
             entry["phase_deg"] = rounded_phase;
-            entry["amplitude"] = round_to(t.amplitude, 3);
+            entry["amplitude"] = round_to(t.amplitude, 4);
             channels.push_back(entry);
         }
         hw_config["channels"] = channels;
@@ -449,7 +489,7 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
 ::std::vector<LayoutResult> Analyzer::run_sensitivity_sweep(const SimulationContext& base_ctx) { 
     is_analyzing_ = true;
     sweep_progress_ = 0.0f;
-    ::std::vector<LayoutResult> results;
+    sweep_results_.clear();
     SimulationContext eval_ctx = base_ctx;
 
     struct ModeInfo {
@@ -459,7 +499,6 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         ::std::vector<Transducer> layout;
         ::std::string type;
         
-        // NEW: Storing Auto-Tuner logic
         float achieved_g;
         float power_w;
         float req_digital_amp;
@@ -469,6 +508,7 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
 
     int total_modes = eval_ctx.n_modes * eval_ctx.n_modes;
     int current_mode = 0;
+
     for (int n = 1; n <= eval_ctx.n_modes; ++n) {
         for (int m = 1; m <= eval_ctx.n_modes; ++m) {
             sweep_progress_ = (float)current_mode++ / total_modes;
@@ -486,11 +526,9 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
                 if (couplings[i] > max_c) max_c = couplings[i];
             }
 
-            // 1. Setup the "Test Drive" at Digital Amp = 1.0. 
-            // We scale the raw coupling to reflect your hardware constraints.
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
                 eval_ctx.transducers[i].phase_rad = phases[i];
-                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c) * eval_ctx.hardware_amp_gain;
+                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c); 
                 eval_ctx.transducers[i].frequency = calibrated_f;
             }
             
@@ -517,33 +555,48 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
                 eval_ctx.transducers[i].frequency = freq;
             }
 
-            if (!physics_->validate_power(freq, eval_ctx)) continue;
-
-            // --- AUTO-TUNER AGC LOOP ---
             Eigen::MatrixXcd resp = physics_->compute_driven_response(freq, eval_ctx);
             Eigen::MatrixXd energy = resp.array().abs();
             double total_disp = energy.sum();
             
-            // 2. Calculate Test Drive G-Force (at Digital Amp = 1.0)
-            double peak_displacement_m = energy.maxCoeff();
-            double omega = 2.0 * M_PI * freq;
-            double peak_acceleration = peak_displacement_m * omega * omega;
-            double test_g_force = peak_acceleration / 9.81;
-
-            // 3. Calculate Scale Factor to hit Target G
-            double target_g = static_cast<double>(eval_ctx.target_g_force);
-            double req_digital_amp = target_g / (test_g_force > 1e-12 ? test_g_force : 1e-12);
-            bool clipped = (req_digital_amp > 1.0);
+            // ====================================================================
+            // --- NEW EMPIRICAL AUTO-TUNER ---
+            // ====================================================================
             
-            double theoretical_power = req_digital_amp * eval_ctx.hardware_amp_gain * eval_ctx.transducer_max_power_w;
+            // 1. Ask the Stage 5 Polynomial Curve how much power 1G requires at this frequency
+            double base_power_1g = (eval_ctx.p_A * freq * freq) + (eval_ctx.p_B * freq) + eval_ctx.p_C;
+            if (base_power_1g < 0.01) base_power_1g = 0.01; // Safety floor
+            
+            // 2. Scale power by the square of the Target G-Force (P scales with G^2)
+            double target_g = static_cast<double>(eval_ctx.target_g_force);
+            double theoretical_target_power = base_power_1g * (target_g * target_g);
+            
+            // 3. Compensate for layout inefficiency. 
+            // If max_coupling is 0.5 compared to the ideal center, it takes 4x the power.
+            double spatial_penalty = 1.0 / (max_c * max_c);
+            double actual_required_power = theoretical_target_power * spatial_penalty;
+            
+            // 4. Calculate required Digital Amp based on Hardware Gain Knob
+            // Power = Max_W * (Digital_Amp * HW_Gain)^2
+            // Digital_Amp = sqrt(Power / Max_W) / HW_Gain
+            double req_digital_amp = ::std::sqrt(actual_required_power / eval_ctx.transducer_max_power_w) / eval_ctx.hardware_amp_gain;
+            
+            bool clipped = (req_digital_amp > 1.0);
+            double final_digital_amp = clipped ? 1.0 : req_digital_amp;
+            
+            // If clipping, reverse-calculate what G-Force we ACTUALLY achieved at 1.0 amp
+            double final_achieved_g = target_g;
+            if (clipped) {
+                double max_possible_power = eval_ctx.transducer_max_power_w * (eval_ctx.hardware_amp_gain * eval_ctx.hardware_amp_gain);
+                double power_ratio = max_possible_power / actual_required_power;
+                final_achieved_g = target_g * ::std::sqrt(power_ratio);
+            }
 
-            // 4. Apply back the final digital amps
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
-                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c) * (clipped ? 1.0 : req_digital_amp);
+                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c) * final_digital_amp;
             }
             
-            float final_g = clipped ? static_cast<float>(test_g_force) : static_cast<float>(target_g);
-            // ---------------------------
+            // ====================================================================
 
             bool unique = true;
             for (auto it = unique_modes.begin(); it != unique_modes.end(); ) {
@@ -574,7 +627,7 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
 
             if (unique) {
                 unique_modes.push_back({freq, energy, total_disp, eval_ctx.transducers, "Mode_" + ::std::to_string(n) + "_" + ::std::to_string(m), 
-                                        final_g, static_cast<float>(theoretical_power), static_cast<float>(req_digital_amp), clipped});
+                                        static_cast<float>(final_achieved_g), static_cast<float>(actual_required_power), static_cast<float>(req_digital_amp), clipped});
             }
         }
     }
@@ -589,16 +642,18 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         res.required_power_w = m.power_w;
         res.required_digital_amp = m.req_digital_amp;
         res.is_clipping = m.clipping;
-        results.push_back(res);
+        sweep_results_.push_back(res);
     }
 
-    ::std::sort(results.begin(), results.end(), [](const LayoutResult& a, const LayoutResult& b) {
+    ::std::sort(sweep_results_.begin(), sweep_results_.end(), [](const LayoutResult& a, const LayoutResult& b) {
         return a.best_layout[0].frequency.value_or(0.0) < b.best_layout[0].frequency.value_or(0.0);
     });
 
+    auto_export_sweep_results(base_ctx);
+
     sweep_progress_ = 1.0f;
     is_analyzing_ = false;
-    return results; 
+    return sweep_results_; 
 }
 
 ::std::vector<LayoutResult> Analyzer::run_grid_search(const SimulationContext& base_ctx) { 

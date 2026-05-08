@@ -43,7 +43,24 @@ echo "Fetching STB headers..."
 curl -L https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o "$THIRD_PARTY_DIR/stb_image.h"
 curl -L https://raw.githubusercontent.com/nothings/stb/master/stb_image_write.h -o "$THIRD_PARTY_DIR/stb_image_write.h"
 
-# 5. Build Directory
+# 5. Nlohmann JSON
+echo "Fetching Nlohmann JSON..."
+mkdir -p "$THIRD_PARTY_DIR/nlohmann"
+if [ ! -f "$THIRD_PARTY_DIR/nlohmann/json.hpp" ]; then
+    curl -L https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp -o "$THIRD_PARTY_DIR/nlohmann/json.hpp"
+else
+    echo "Nlohmann JSON already exists, skipping download."
+fi
+
+# 6. Eigen3
+echo "Fetching Eigen3..."
+if [ ! -d "$THIRD_PARTY_DIR/eigen" ]; then
+    git clone --depth 1 -b 3.4.0 https://gitlab.com/libeigen/eigen.git "$THIRD_PARTY_DIR/eigen"
+else
+    echo "Eigen already exists, skipping clone."
+fi
+
+# 7. Build Directory
 echo "Creating build directory..."
 mkdir -p "$PROJECT_ROOT/build"
 

@@ -46,17 +46,22 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.lx = 0.30;
   ctx_.ly = 0.20;
   ctx_.h = 0.0010;
-  ctx_.e = 193e9; // Steel
+  ctx_.e = 193e9; 
   ctx_.rho = 8000.0;
   ctx_.nu = 0.29;
   ctx_.damping = 0.005;
   ctx_.n_modes = 15;
   ctx_.max_frequency = 20000.0;
   ctx_.sign = 1;
+  
   ctx_.calib_m = 1.0;
   ctx_.calib_b = 0.0;
   
-  // Set auto-tuner defaults
+  // Power calibration defaults
+  ctx_.p_A = 0.0;
+  ctx_.p_B = 0.0;
+  ctx_.p_C = 1.0;
+  
   ctx_.transducer_max_power_w = 25.0f;
   ctx_.hardware_amp_gain = 0.8f;
   ctx_.target_g_force = 5.0f;
@@ -107,8 +112,8 @@ bool Application::init() {
 void Application::refresh_sim_files() {
     available_sim_files_.clear();
     try {
-        if (!::std::filesystem::exists("./sim")) return;
-        for (const auto& entry : ::std::filesystem::directory_iterator("./sim")) {
+        ::std::filesystem::create_directories("../sim/transducer_analysis");
+        for (const auto& entry : ::std::filesystem::directory_iterator("../sim/transducer_analysis")) {
             if (entry.path().extension() == ".json") {
                 available_sim_files_.push_back(entry.path().filename().string());
             }
@@ -190,7 +195,6 @@ void Application::render_pure_viewport(const nlohmann::json& symbol) {
             ImPlot::EndPlot();
         }
 
-        // FIXED: Burn metadata now properly reflects the HW Amp Gain instead of old base_volume
         char caption[512];
         ::std::snprintf(caption, sizeof(caption), 
             "Symbol: %s\nFreq: %.1f Hz\nHW Gain: %.2f", 
@@ -214,7 +218,6 @@ void Application::run() {
             
             if (symbol.contains("hardware_config")) {
                 const auto& hw_config = symbol["hardware_config"];
-                // Load updated HW configs for batch
                 ctx_.hardware_amp_gain = hw_config.value("hardware_amp_gain", 1.0);
                 ctx_.transducer_max_power_w = hw_config.value("max_power_w", 25.0);
                 
@@ -351,7 +354,6 @@ void Application::render_viewport() {
   
   if (ImGui::BeginTabBar("WorkstationTabs")) {
       
-      // --- TAB 1: LIVE PLATE VIEWER ---
       if (ImGui::BeginTabItem("Live Plate Viewport")) {
           ImGui::Checkbox("Show Particles", &show_particles_);
           if (analyzer_->is_analyzing()) {
@@ -407,7 +409,6 @@ void Application::render_viewport() {
           ImGui::EndTabItem();
       }
 
-      // --- TAB 2: INTERACTIVE HEATMAP ---
       if (ImGui::BeginTabItem("Symmetry Heatmap Tool")) {
           ImGui::Text("Load previous simulation data to analyze the optimization landscape:");
           ImGui::SameLine();
@@ -428,16 +429,9 @@ void Application::render_viewport() {
               
               ImGui::SameLine();
               if (ImGui::Button("Load File Matrix")) {
-                  if (analyzer_->load_sim_results("./sim/" + available_sim_files_[selected_sim_file_idx_], ctx_)) {
-                      const HeatmapData& loaded_hm = analyzer_->get_heatmap_data();
-                      if (loaded_hm.valid) {
-                          stage2_params_.use_roi = true;
-                          stage2_params_.roi_dx_min = loaded_hm.dx_min;
-                          stage2_params_.roi_dx_max = loaded_hm.dx_max;
-                          stage2_params_.roi_dy_min = loaded_hm.dy_min;
-                          stage2_params_.roi_dy_max = loaded_hm.dy_max;
-                          stage2_params_.step_size_m = 0.001f; 
-                      }
+                  if (analyzer_->load_sim_results("../sim/transducer_analysis/" + available_sim_files_[selected_sim_file_idx_], ctx_)) {
+                      stage2_params_.use_roi = false;
+                      stage2_params_.step_size_m = 0.015f; 
                   }
               }
               
@@ -450,7 +444,7 @@ void Application::render_viewport() {
                   }
               }
           } else {
-              ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "No .json files found in ./sim/");
+              ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "No .json files found in ../sim/transducer_analysis/");
               if (hm.valid) {
                   ImGui::SameLine();
                   if (ImGui::Button("Clear Heatmap Memory")) {

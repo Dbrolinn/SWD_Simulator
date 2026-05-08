@@ -1,67 +1,96 @@
 # SWAID Chladni Simulator
 
-A hardware-accurate plate resonance calibration suite for the SWAID Plate Resonance team.
+A hardware-accurate finite element analysis (FEA) and electromechanical calibration suite for the SWAID Plate Resonance team.
 
 ## Overview
 
-This simulator transitions from a theoretical sandbox into a strict calibration tool. It enforces physical hardware constraints, optimizes acoustic power requirements, and produces unified `master_symbols.json` files for the SWAID pipeline.
+This simulator has transitioned from a theoretical physics sandbox into a strict, real-world calibration tool. It evaluates acoustic resonance modes, enforces physical hardware constraints (like maximum amplifier wattage), mathematically auto-tunes digital amplitudes to hit specific G-force targets, and produces unified `master_symbols.json` dictionaries for the SWAID IPC pipeline.
 
-## Features
+## Core Features
 
-- **Amplitude Optimization:** Uses binary search to find the minimum power (0-25W) required to achieve 1G acceleration, preventing thermal overload.
-- **Sensitivity Sweep:** Identifies actual resonance peaks around theoretical frequencies (+/- 5%).
-- **JSON Pipeline:** Replaced legacy CSV format with IPC System State Bus compatible JSON serialization.
-- **Hardware-Accurate UI:** Enforces SWAID plate dimensions (default 300x200mm) and transducer mechanical clearances (50mm radius).
+- **Empirical Power Modeling:** Replaces abstract ideal physics with a calibrated polynomial curve based on real-world bench testing (The "Visual 1G Threshold" method) to accurately predict high-frequency power requirements.
+- **Automatic Gain Control (AGC):** Automatically scales the digital amplitude of specific transducer layouts to achieve a strict plate acceleration target (e.g., 5.0 Gs). Safely flags and caps modes that exceed the hardware's maximum power output (e.g., 25W).
+- **Acceleration Spectrum Analyzer:** Plots high-precision Acceleration Frequency Response Functions (FRF) to easily identify high-frequency resonant modes without aggressive visual roll-off.
+- **Data Pipeline:** Outputs highly detailed JSON files for analysis arrays, sweep logs, and final production dictionaries.
 
-## Workflow (The 4 Stages)
+## The 5-Stage Engineering Workflow
 
-1. **Manual Stage:** Configure plate geometry and material. Manually place up to 4 transducers.
-2. **GA Optimizer:** Run a Genetic Algorithm to discover the best physical layouts for a diverse "alphabet" of resonance patterns.
-3. **Variable Sweep:** Perform an exhaustive sweep of the locked layout to find exact resonance peaks and optimized power settings. Export results to `master_symbols.json`.
-4. **Batch Plotter:** Render Chladni figures automatically from `master_symbols.json`.
+The application is structured into a linear 5-step pipeline:
+
+### Stage 1: Manual Sandbox
+Configure the foundational physics. Define the plate's geometry (Square, Rectangular, Circular), dimensions, thickness, and material properties (Young's Modulus, Density, Poisson's ratio). Manually place up to 4 transducers to observe real-time modal excitation and particle behavior.
+
+### Stage 2: Symmetric Explorer
+An automated spatial analysis tool. It maps the plate using a defined resolution step and simulates hundreds of transducer coordinate configurations. It outputs an interactive 2D Heatmap detailing which coordinate regions yield the largest "alphabet" of unique resonant shapes. Users can drag-select Regions of Interest (ROI) for finer sweeps.
+
+### Stage 3: Variable Sweep & Auto-Tuner
+Locks in a specific transducer layout and performs an exhaustive frequency sweep.
+- Discovers exact resonant peaks.
+- Consults the Empirical Power Curve (calibrated in Stage 5) to calculate how much electrical power is required to hit the user's Target G-Force.
+- Automatically tunes the Digital Amplitude for each mode.
+- Publishes the final verified list of shapes to the `sim/symbols/` directory.
+
+### Stage 4: Batch Plotter
+An automated rendering suite. It reads a published `master_symbols.json` dictionary and silently generates high-resolution Chladni sand-pattern images for the entire alphabet, saving them to the output dictionary folder for UI/UX implementation.
+
+### Stage 5: Lab Calibration
+The bridge between mathematical theory and physical reality.
+1. **Frequency Drift:** Uses linear regression to map theoretical simulator frequencies to actual observed frequencies on the lab bench.
+2. **Empirical Power Envelope:** Accepts user-measured lab data (Frequency vs. Watts required to just barely bounce sand at 1.0G). Uses an Eigen Least-Squares solver to generate a precise quadratic polynomial curve that models the unique electromechanical impedance and sand-adhesion friction of your specific physical setup.
+
+## Data Architecture
+
+All generated data is saved relative to the repository root:
+- `sim/transducer_analysis/`: Stores matrix heatmap logs generated by Stage 2.
+- `sim/variable_sweep/`: Stores detailed tuning logs and abstract displacement metrics generated by Stage 3.
+- `sim/symbols/`: Stores the final, published `master_symbols_*.json` dictionaries ready for production use.
 
 ## Build Requirements
 
-- **C++17** compatible compiler (e.g., GCC 9+, Clang 10+).
-- **Eigen3**
-- **nlohmann/json**
-- **Git** (for fetching dependencies)
+- **C++17** compatible compiler (e.g., GCC 9+, Clang 10+)
 - **CMake 3.10+**
+- **Git** (for the dependency setup script)
+- Linux environment requires basic X11 development headers.
 
-## Installation
+*Note: Core libraries like Eigen3, Nlohmann JSON, GLFW, ImGui, and ImPlot are entirely managed locally by the setup script to ensure reproducible builds.*
 
-Since third-party libraries and build artifacts are not committed to the repository, you must run the setup script first:
+## Installation & Build Guide
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository_url>
-   cd SWD_Simulator
-   ```
+Since third-party libraries and build artifacts are kept out of version control, you must run the setup script before compiling.
 
-2. **Install dependencies:**
-   ```bash
-   ./setup_dependencies.sh
-   ```
-   This script fetches **GLFW**, **Dear ImGui (docking)**, **ImPlot**, and **STB** into the `third_party` directory and prepares the `build` folder.
+### 1. Install System Dependencies (Linux/Debian)
+Ensure you have the required build tools and windowing headers:
+```bash
+sudo apt update
+sudo apt install build-essential cmake git curl libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
 
-## Build & Run Guide
+```
 
-Follow these commands to compile the project and start the application:
+### 2. Fetch Third-Party Libraries
 
-### 1. Compile the Project
-Navigate to the build directory and use CMake to generate the build files, then compile using `make`:
+Run the provided shell script from the repository root. This will download all necessary C++ libraries directly into a local `third_party/` directory and create the `build/` folder.
+
+```bash
+./setup_dependencies.sh
+
+```
+
+### 3. Compile the Project
+
+Navigate into the build directory, run CMake to generate the makefiles, and compile:
+
 ```bash
 cd build
 cmake ..
 make
+
 ```
 
-### 2. Run the Application
-Once the build is complete, execute the simulator from the `build` directory:
+### 4. Run the Application
+
+Execute the compiled binary from the build directory:
+
 ```bash
 ./chladni_sim
-```
 
----
-**Note:** Ensure you have the system-level requirements (GCC/Clang, Eigen3, and nlohmann/json) installed before building. On Debian/Ubuntu, you can install the core dependencies with:
-`sudo apt install libeigen3-dev nlohmann-json3-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev`
+```
