@@ -23,7 +23,7 @@ enum class Geometry { kSquare, kRectangular, kCircular };
 struct Transducer {
   double x;
   double y;
-  double amplitude; // Power in Watts
+  double amplitude; // Now acts purely as the Software Digital Amp (0.0 to 1.0)
   double phase_rad;
   ::std::optional<double> frequency;
 };
@@ -40,14 +40,17 @@ struct SimulationContext {
   int n_modes;
   double max_frequency = 20000.0;
   int sign;
-  double base_volume_1 = 1.0;
-  double base_volume_2 = 1.0;
   double calib_m = 1.0;
   double calib_b = 0.0;
   
-  // Dynamic hardware constraints
   double transducer_radius_m = 0.025;
   double transducer_spacing_m = 0.005;
+
+  // Auto-Tuner Target Goals
+  double transducer_max_power_w = 25.0;
+  double hardware_amp_gain = 0.8;
+  double target_g_force = 5.0;
+  double particle_mass_mg = 1.0;
 
   ::std::vector<Transducer> transducers;
   VibrationSpeaker speaker;
@@ -74,22 +77,9 @@ class PhysicsEngine {
   void step_particles(const Eigen::MatrixXcd& response, double lx, double ly, double dt);
   const Eigen::MatrixXd& get_particles() const { return particles_; }
 
-  /**
-   * @brief Checks if a mode (n, m) is degenerate with (m, n).
-   */
   bool is_degenerate(int n, int m, const SimulationContext& ctx);
-
-  /**
-   * @brief Snipes phases for a mode, handling quadrature if degenerate.
-   */
   ::std::vector<double> snipe_phases(int n, int m, const SimulationContext& ctx);
-
-  /**
-   * @brief Strictly validates power feasibility (acceleration >= 9.81 m/s^2).
-   */
   bool validate_power(double frequency, const SimulationContext& ctx);
-
-  // ── Helpers ──────────────────────────────────────────────────────────
   void clamp_transducer(Transducer& t, const SimulationContext& ctx);
 
   int get_resolution() const { return resolution_; }
@@ -106,7 +96,7 @@ class PhysicsEngine {
       double last_f = -1.0;
       Eigen::MatrixXcd last_resp;
       ::std::vector<Transducer> last_transducers;
-      double last_vol1 = -1.0, last_vol2 = -1.0;
+      double last_hw_gain = -1.0;
       double last_damping = -1.0;
   } resp_cache_;
 

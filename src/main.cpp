@@ -8,6 +8,8 @@
 #include <exception>
 
 int main(int argc, char** argv) {
+  (void)argc;
+  (void)argv;
   try {
     std::cout << "Starting SWAID Chladni Simulator..." << std::endl;
     chladni::Application app("SWAID Plate Resonance", 1280, 720);

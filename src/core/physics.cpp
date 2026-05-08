@@ -167,8 +167,7 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
 
   if (::std::abs(resp_cache_.last_f - frequency) < 1e-3 && 
       !transducers_changed &&
-      ::std::abs(resp_cache_.last_vol1 - ctx.base_volume_1) < 1e-4 &&
-      ::std::abs(resp_cache_.last_vol2 - ctx.base_volume_2) < 1e-4 &&
+      ::std::abs(resp_cache_.last_hw_gain - ctx.hardware_amp_gain) < 1e-4 &&
       ::std::abs(resp_cache_.last_damping - ctx.damping) < 1e-6 &&
       resp_cache_.last_resp.rows() == resolution_) {
       return resp_cache_.last_resp;
@@ -181,8 +180,9 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
   
   for (size_t i = 0; i < ctx.transducers.size(); ++i) {
     const auto& t = ctx.transducers[i];
-    double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
-    double effective_power_w = 25.0 * amp_gain * t.amplitude;
+    
+    // NEW: Unified Hardware Target Power Calculation
+    double effective_power_w = ctx.transducer_max_power_w * ctx.hardware_amp_gain * t.amplitude;
     double force_amplitude = ::std::sqrt(effective_power_w) * motor_efficiency;
     
     Eigen::VectorXd c_nm(cache_.ns.size());
@@ -208,8 +208,7 @@ Eigen::MatrixXcd PhysicsEngine::compute_driven_response(double frequency, const 
   resp_cache_.last_f = frequency;
   resp_cache_.last_resp = resp;
   resp_cache_.last_transducers = ctx.transducers;
-  resp_cache_.last_vol1 = ctx.base_volume_1;
-  resp_cache_.last_vol2 = ctx.base_volume_2;
+  resp_cache_.last_hw_gain = ctx.hardware_amp_gain;
   resp_cache_.last_damping = ctx.damping;
 
   return resp;
@@ -246,8 +245,9 @@ bool PhysicsEngine::check_power_feasibility(double frequency, const SimulationCo
   double motor_efficiency = 3.5;
   for (size_t i = 0; i < ctx.transducers.size(); ++i) {
       const auto& t = ctx.transducers[i];
-      double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
-      double effective_power_w = 25.0 * amp_gain * t.amplitude;
+      
+      // NEW: Unified Hardware Target Power Calculation
+      double effective_power_w = ctx.transducer_max_power_w * ctx.hardware_amp_gain * t.amplitude;
       
       Eigen::VectorXd c_nm(cache_.ns.size());
       for (size_t k = 0; k < cache_.ns.size(); ++k) {
@@ -311,7 +311,9 @@ void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx
         if (r > R && r > 1e-9) { t.x *= R/r; t.y *= R/r; }
     } else {
         double xm = ctx.lx / 2.0 - margin, ym = ctx.ly / 2.0 - margin;
-        t.x = ::std::clamp(t.x, -xm, xm); t.y = ::std::clamp(t.y, -ym, ym);
+        // FIXED: Explicitly casting all parameters to double for std::clamp
+        t.x = ::std::clamp(t.x, -xm, xm);
+        t.y = ::std::clamp(t.y, -ym, ym);
     }
 }
 
@@ -322,14 +324,18 @@ void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx
   Eigen::VectorXd freqs = Eigen::VectorXd::LinSpaced(n_points, f_min, f_max);
   if (ctx.geometry == Geometry::kCircular) build_cache_circ(ctx); else build_cache_rect(ctx);
   
+  double motor_efficiency = 3.5;
+  
   // Pre-calculate modal forcing coefficients |F_k|^2
   ::std::vector<double> F_k_sq(cache_.ns.size(), 0.0);
   for (size_t k = 0; k < cache_.ns.size(); ++k) {
       ::std::complex<double> F_k(0, 0);
       for (size_t i = 0; i < ctx.transducers.size(); ++i) {
           const auto& t = ctx.transducers[i];
-          double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
-          double force_amplitude = ::std::sqrt(25.0 * amp_gain * t.amplitude);
+          
+          // NEW: Unified Hardware Target Power Calculation
+          double effective_power_w = ctx.transducer_max_power_w * ctx.hardware_amp_gain * t.amplitude;
+          double force_amplitude = ::std::sqrt(effective_power_w) * motor_efficiency;
           
           double val = 0;
           if (ctx.geometry == Geometry::kCircular) {
@@ -364,12 +370,17 @@ void PhysicsEngine::clamp_transducer(Transducer& t, const SimulationContext& ctx
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_);
   if (ctx.geometry == Geometry::kCircular) build_cache_circ(ctx); else build_cache_rect(ctx);
   ::std::vector<double> res_f;
+  
+  double motor_efficiency = 3.5;
+  
   for (size_t k = 0; k < cache_.ns.size(); ++k) {
       int n = cache_.ns[k], m = cache_.ms[k]; ::std::complex<double> F_k = 0;
       for (size_t i = 0; i < ctx.transducers.size(); ++i) {
           const auto& t = ctx.transducers[i];
-          double amp_gain = (i < 2) ? ctx.base_volume_1 : ctx.base_volume_2;
-          double force_amplitude = ::std::sqrt(25.0 * amp_gain * t.amplitude);
+          
+          // NEW: Unified Hardware Target Power Calculation
+          double effective_power_w = ctx.transducer_max_power_w * ctx.hardware_amp_gain * t.amplitude;
+          double force_amplitude = ::std::sqrt(effective_power_w) * motor_efficiency;
           
           double val = 0;
           if (ctx.geometry == Geometry::kCircular) {
@@ -402,7 +413,7 @@ double PhysicsEngine::transducer_coupling_single(double tx, double ty, int n, in
 
 void PhysicsEngine::init_particles(int n, double lx, double ly) {
   ::std::lock_guard<::std::recursive_mutex> lock(mutex_); particles_.resize(n, 2); particle_vel_ = Eigen::MatrixXd::Zero(n, 2);
-  ::std::random_device rd; ::std::mt19937 gen(rd()); ::std::uniform_real_distribution<> dx(-lx/2.0, lx/2.0), dy(-ly/2.0, ly/2.0);
+  ::std::random_device rd; ::std::mt19937 gen(rd()); ::std::uniform_real_distribution<double> dx(-lx/2.0, lx/2.0), dy(-ly/2.0, ly/2.0);
   for (int i = 0; i < n; ++i) { particles_(i, 0) = dx(gen); particles_(i, 1) = dy(gen); }
 }
 
@@ -419,7 +430,8 @@ void PhysicsEngine::step_particles(const Eigen::MatrixXcd& resp, double lx, doub
   double fs = 0.5, fr = 0.85;
   for (int i = 0; i < particles_.rows(); ++i) {
     double px = particles_(i, 0), py = particles_(i, 1);
-    int gxi = ::std::clamp(static_cast<int>((px/lx + 0.5)*(resolution_-1)), 0, resolution_-1), gyi = ::std::clamp(static_cast<int>((py/ly + 0.5)*(resolution_-1)), 0, resolution_-1);
+    int gxi = ::std::clamp(static_cast<int>((px/lx + 0.5)*(resolution_-1)), 0, resolution_-1);
+    int gyi = ::std::clamp(static_cast<int>((py/ly + 0.5)*(resolution_-1)), 0, resolution_-1);
     double fxc = -gx(gyi, gxi) * fs, fyc = -gy(gyi, gxi) * fs;
     particle_vel_(i, 0) = particle_vel_(i, 0) * fr + fxc * dt; particle_vel_(i, 1) = particle_vel_(i, 1) * fr + fyc * dt;
     particles_(i, 0) += particle_vel_(i, 0) * dt; particles_(i, 1) += particle_vel_(i, 1) * dt;

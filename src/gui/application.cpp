@@ -28,8 +28,11 @@
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+#pragma GCC diagnostic pop
 
 namespace chladni {
 
@@ -50,10 +53,15 @@ Application::Application(const ::std::string& title, int width, int height)
   ctx_.n_modes = 15;
   ctx_.max_frequency = 20000.0;
   ctx_.sign = 1;
-  ctx_.base_volume_1 = 1.0;
-  ctx_.base_volume_2 = 1.0;
   ctx_.calib_m = 1.0;
   ctx_.calib_b = 0.0;
+  
+  // Set auto-tuner defaults
+  ctx_.transducer_max_power_w = 25.0f;
+  ctx_.hardware_amp_gain = 0.8f;
+  ctx_.target_g_force = 5.0f;
+  ctx_.particle_mass_mg = 1.0f;
+  
   ctx_.transducer_radius_m = 0.025;
   ctx_.transducer_spacing_m = 0.005;
   ctx_.speaker = {};
@@ -182,11 +190,12 @@ void Application::render_pure_viewport(const nlohmann::json& symbol) {
             ImPlot::EndPlot();
         }
 
+        // FIXED: Burn metadata now properly reflects the HW Amp Gain instead of old base_volume
         char caption[512];
         ::std::snprintf(caption, sizeof(caption), 
-            "Symbol: %s\nFreq: %.1f Hz\nAmp1: %.2f | Amp2: %.2f", 
+            "Symbol: %s\nFreq: %.1f Hz\nHW Gain: %.2f", 
             symbol.value("display_name", "UNKNOWN").c_str(),
-            (double)current_freq_, ctx_.base_volume_1, ctx_.base_volume_2);
+            (double)current_freq_, ctx_.hardware_amp_gain);
         
         ImGui::GetWindowDrawList()->AddText(ImVec2(20, 20), IM_COL32(255, 255, 0, 255), caption);
     }
@@ -205,8 +214,9 @@ void Application::run() {
             
             if (symbol.contains("hardware_config")) {
                 const auto& hw_config = symbol["hardware_config"];
-                ctx_.base_volume_1 = hw_config.value("base_volume_1", 1.0);
-                ctx_.base_volume_2 = hw_config.value("base_volume_2", 1.0);
+                // Load updated HW configs for batch
+                ctx_.hardware_amp_gain = hw_config.value("hardware_amp_gain", 1.0);
+                ctx_.transducer_max_power_w = hw_config.value("max_power_w", 25.0);
                 
                 ctx_.transducers.clear();
                 double freq = 0.0;
@@ -221,17 +231,30 @@ void Application::run() {
                     ctx_.transducers.push_back(t);
                 }
                 current_freq_ = static_cast<float>(freq);
-                update_texture();
-
-                ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
                 
-                render_pure_viewport(symbol);
+                physics_->compute_visuals(static_cast<double>(current_freq_), ctx_, current_sand_, current_deformation_);
 
-                ImGui::Render();
+                int out_w = 1200;
+                int out_h = static_cast<int>(1200.0 * (ctx_.ly / ctx_.lx));
+                if (ctx_.geometry == Geometry::kCircular) out_h = 1200;
                 
-                int dw, dh; glfwGetFramebufferSize(window_, &dw, &dh);
-                glViewport(0, 0, dw, dh); glClearColor(0.05f, 0.05f, 0.05f, 1.0f); glClear(GL_COLOR_BUFFER_BIT);
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                int res = physics_->get_resolution();
+                ::std::vector<unsigned char> pixels(out_w * out_h * 3, 0);
+
+                for (int y = 0; y < out_h; ++y) {
+                    for (int x = 0; x < out_w; ++x) {
+                        float u = static_cast<float>(x) / (out_w - 1);
+                        float v = static_cast<float>(y) / (out_h - 1);
+                        int grid_x = ::std::clamp(static_cast<int>(u * res), 0, res - 1);
+                        int grid_y = ::std::clamp(static_cast<int>(v * res), 0, res - 1);
+                        double val = current_sand_(res - 1 - grid_y, grid_x); 
+                        int idx = (y * out_w + x) * 3;
+                        float intensity = ::std::clamp(static_cast<float>(val), 0.0f, 1.0f);
+                        pixels[idx + 0] = static_cast<unsigned char>(intensity * 255.0f);
+                        pixels[idx + 1] = static_cast<unsigned char>(intensity * 220.0f);
+                        pixels[idx + 2] = static_cast<unsigned char>(intensity * 120.0f);
+                    }
+                }
 
                 ::std::string json_image_path = symbol["ui_metadata"].value("image_path", "");
                 ::std::string filename = (json_image_path.empty()) ? 
@@ -240,9 +263,15 @@ void Application::run() {
 
                 ::std::filesystem::path p(filename);
                 if (p.has_parent_path()) ::std::filesystem::create_directories(p.parent_path());
-                save_screenshot(filename);
+                stbi_write_png(filename.c_str(), out_w, out_h, 3, pixels.data(), out_w * 3);
                 
+                ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame(); ImGui::NewFrame();
+                ImGui::Render();
+                int dw, dh; glfwGetFramebufferSize(window_, &dw, &dh);
+                glViewport(0, 0, dw, dh); glClearColor(0.05f, 0.05f, 0.05f, 1.0f); glClear(GL_COLOR_BUFFER_BIT);
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 glfwSwapBuffers(window_);
+                
                 batch_current_idx_++;
             } else {
                 batch_current_idx_++;
@@ -402,7 +431,6 @@ void Application::render_viewport() {
                   if (analyzer_->load_sim_results("./sim/" + available_sim_files_[selected_sim_file_idx_], ctx_)) {
                       const HeatmapData& loaded_hm = analyzer_->get_heatmap_data();
                       if (loaded_hm.valid) {
-                          // FIX: AUTOMATICALLY PRIME STAGE 2 FOR FINE SWEEP!
                           stage2_params_.use_roi = true;
                           stage2_params_.roi_dx_min = loaded_hm.dx_min;
                           stage2_params_.roi_dx_max = loaded_hm.dx_max;
@@ -436,14 +464,11 @@ void Application::render_viewport() {
           ImGui::Separator();
 
           if (hm.valid) {
-              ImGui::TextColored(ImVec4(0, 1, 1, 1), "Tip: Right-Click and drag to zoom into a hotspot. Shift + Left-Click to draw a selection box.");
+              ImGui::TextColored(ImVec4(0, 1, 1, 1), "Tip: Drag a selection box (Shift+LeftClick) OR Zoom in (RightClick+Drag), then apply it below.");
               
-              // -------------------------------------------------------------
-              // DISCRETE COLORMAP BINNING
-              // -------------------------------------------------------------
               ::std::vector<float> unique_scores;
               for (float s : hm.scores) {
-                  if (s > 0.0f && ::std::find(unique_scores.begin(), unique_scores.end(), s) == unique_scores.end()) {
+                  if (s >= 0.0f && ::std::find(unique_scores.begin(), unique_scores.end(), s) == unique_scores.end()) {
                       unique_scores.push_back(s);
                   }
               }
@@ -451,22 +476,19 @@ void Application::render_viewport() {
               
               ::std::vector<float> mapped_scores(hm.scores.size(), 0.0f);
               for (size_t i = 0; i < hm.scores.size(); ++i) {
-                  if (hm.scores[i] > 0.0f) {
+                  if (hm.scores[i] >= 0.0f) {
                       auto it = ::std::find(unique_scores.begin(), unique_scores.end(), hm.scores[i]);
                       mapped_scores[i] = static_cast<float>(::std::distance(unique_scores.begin(), it) + 1);
                   }
               }
               float max_bin = ::std::max(1.0f, static_cast<float>(unique_scores.size()));
 
-              // Compute grid cell bounds mathematically
               float step_x = (hm.nx > 1) ? (hm.dx_max - hm.dx_min) / (hm.nx - 1) : 0.015f;
               float step_y = (hm.ny > 1) ? (hm.dy_max - hm.dy_min) / (hm.ny - 1) : 0.015f;
 
-              // FIX: REORDER DATA TO PREVENT UPSIDE-DOWN RENDERING
               ::std::vector<float> display_scores(hm.nx * hm.ny, 0.0f);
               for (int y = 0; y < hm.ny; ++y) {
                   for (int x = 0; x < hm.nx; ++x) {
-                      // ImPlot draws data[0] at top-left. We map dy_max (ny-1) to the top row.
                       int inverted_y = hm.ny - 1 - y;
                       display_scores[inverted_y * hm.nx + x] = mapped_scores[y * hm.nx + x];
                   }
@@ -485,44 +507,35 @@ void Application::render_viewport() {
                   limits = ImPlot::GetPlotLimits();
                   has_limits = true;
 
-                  // Plot Heatmap using corrected inverted rows
                   ImPlot::PlotHeatmap("Alphabet Size", display_scores.data(), hm.ny, hm.nx, 0.0f, max_bin, nullptr,
                                       ImPlotPoint((double)(hm.dx_min - step_x/2.0f), (double)(hm.dy_min - step_y/2.0f)), 
                                       ImPlotPoint((double)(hm.dx_max + step_x/2.0f), (double)(hm.dy_max + step_y/2.0f)));
                   
-                  // Manually draw the TRUE score text over each cell (Zeros Restored!)
                   for (int y = 0; y < hm.ny; ++y) {
                       for (int x = 0; x < hm.nx; ++x) {
                           float val = hm.scores[y * hm.nx + x];
                           float px = hm.dx_min + x * step_x;
                           float py = hm.dy_min + y * step_y;
                           char buf[16]; ::std::snprintf(buf, sizeof(buf), "%.0f", val);
-                          ImPlot::PlotText(buf, px, py); 
+                          ImPlot::PlotText(buf, px, py);
                       }
                   }
 
-                  // -------------------------------------------------------------
-                  // TOP 10 HIGHLIGHTING
-                  // -------------------------------------------------------------
                   const auto& tops = analyzer_->get_top_layouts();
                   if (!tops.empty()) {
                       for (size_t i = 0; i < tops.size(); ++i) {
                           double tx = static_cast<double>(tops[i].grid_dx);
                           double ty = static_cast<double>(tops[i].grid_dy);
-                          
-                          // Draw a prominent Gold annotation pointing exactly to the hotspot
                           char lbl[32]; ::std::snprintf(lbl, sizeof(lbl), "  #%zu  ", i+1);
                           ImPlot::Annotation(tx, ty, ImVec4(0.9f, 0.7f, 0.0f, 1.0f), ImVec2(10, 10), true, "%s", lbl);
                       }
                   }
 
-                  // Clear the selection boundary if Confirmed
                   if (cancel_roi) {
                       ImPlot::CancelPlotSelection();
                       cancel_roi = false;
                   }
 
-                  // Check if user is currently drawing/has drawn a box
                   if (ImPlot::IsPlotSelected()) {
                       has_selection = true;
                       selection = ImPlot::GetPlotSelection();
@@ -531,9 +544,6 @@ void Application::render_viewport() {
                   ImPlot::EndPlot();
               }
 
-              // -------------------------------------------------------------
-              // ROI CONFIRMATION (Supports both Zooming and Selection Box!)
-              // -------------------------------------------------------------
               if (has_selection) {
                   ImGui::TextColored(ImVec4(1, 1, 0, 1), "Selection Box: X [%.3f, %.3f]  |  Y [%.3f, %.3f]", 
                       selection.X.Min, selection.X.Max, selection.Y.Min, selection.Y.Max);
@@ -546,7 +556,6 @@ void Application::render_viewport() {
                       stage2_params_.roi_dy_min = ::std::max(0.0f, static_cast<float>(selection.Y.Min));
                       stage2_params_.roi_dy_max = ::std::min(static_cast<float>((ctx_.geometry == Geometry::kCircular ? ctx_.lx : ctx_.ly) / 2.0), static_cast<float>(selection.Y.Max));
                       stage2_params_.step_size_m = 0.001f; 
-                      
                       cancel_roi = true; 
                   }
               } else if (has_limits) {

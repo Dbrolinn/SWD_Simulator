@@ -20,7 +20,10 @@ class Panels {
  private:
   static void draw_stage1_manual(SimulationContext& ctx, Application* app, float& current_freq, float& f_max);
   static void draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer, Application* app);
-  static void draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer);
+  
+  // FIXED: Passed current_freq reference so we can snap the UI slider on Apply!
+  static void draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer, float& current_freq);
+  
   static void draw_stage4_batch(SimulationContext& ctx, Application* app, bool& is_batch_running, float& batch_progress, ::std::string& batch_status);
   static void draw_stage5_calibration(SimulationContext& ctx);
   

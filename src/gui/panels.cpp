@@ -13,7 +13,7 @@
 #include <cmath>
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI 3.14159265358979323846f
 #endif
 
 namespace chladni {
@@ -31,7 +31,7 @@ void Panels::draw_main_ui(SimulationContext& ctx, Application* app, Analyzer& an
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Stage 3: Variable Sweep")) {
-            draw_stage3_sweep(ctx, analyzer);
+            draw_stage3_sweep(ctx, analyzer, current_freq);
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("Stage 4: Batch Plotter")) {
@@ -87,11 +87,8 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
         if (ImGui::Button("Next Peak")) app->snap_to_resonance(1);
     }
 
-    if (ImGui::CollapsingHeader("SiniLink Amplifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
-        double min_v = 0.0, max_v = 1.0;
-        ImGui::SliderScalar("Amp 1 Gain", ImGuiDataType_Double, &ctx.base_volume_1, &min_v, &max_v);
-        ImGui::SliderScalar("Amp 2 Gain", ImGuiDataType_Double, &ctx.base_volume_2, &min_v, &max_v);
-    }
+    // FIXED: Completely removed the redundant "SiniLink Amplifiers" section from Stage 1!
+    // Hardware constraints are now exclusively controlled mathematically in Stage 3.
 
     if (ImGui::CollapsingHeader("Transducers", ImGuiTreeNodeFlags_DefaultOpen)) {
         
@@ -109,7 +106,7 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
         
         int t_count = static_cast<int>(ctx.transducers.size());
         if (ImGui::SliderInt("Count", &t_count, 1, 4)) {
-            while (ctx.transducers.size() < (size_t)t_count) ctx.transducers.push_back({0.0, 0.0, 1.0, 0.0, ::std::nullopt});
+            while (ctx.transducers.size() < (size_t)t_count) ctx.transducers.push_back({0.0f, 0.0f, 1.0f, 0.0f, ::std::nullopt});
             while (ctx.transducers.size() > (size_t)t_count) ctx.transducers.pop_back();
         }
 
@@ -126,6 +123,8 @@ void Panels::draw_stage1_manual(SimulationContext& ctx, Application* app, float&
                 double min_p = 0.0, max_p = 1.0;
                 ImGui::SliderScalar("Digital Amp", ImGuiDataType_Double, &ctx.transducers[i].amplitude, &min_p, &max_p);
                 ImGui::InputDouble("Digital Amp ##Text", &ctx.transducers[i].amplitude);
+                
+                // FIXED: Use pure double limits (0.0, 1.0) instead of float limits (0.0f, 1.0f)
                 ctx.transducers[i].amplitude = ::std::clamp(ctx.transducers[i].amplitude, 0.0, 1.0);
                 
                 double deg = (ctx.transducers[i].phase_rad * 180.0 / M_PI);
@@ -216,7 +215,7 @@ void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer, Applic
         ImGui::TextColored(ImVec4(0, 1, 0, 1), "Best Alphabet Discovered: %d symbols", analyzer.get_grid_best_alphabet());
     } else {
         if (grid_future.valid() && grid_future.wait_for(::std::chrono::seconds(0)) == ::std::future_status::ready) {
-            grid_future.get(); // Resolve promise
+            grid_future.get(); 
         }
 
         if (ImGui::Button(params.use_roi ? "Execute Fine Sweep on ROI" : "Execute Coarse Map of Full Plate", ImVec2(-1, 40))) {
@@ -227,7 +226,6 @@ void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer, Applic
         }
     }
 
-    // NEW: Always pull from Analyzer memory, seamlessly merging active runs and loaded JSONs!
     const auto& top_layouts = analyzer.get_top_layouts();
     if (!top_layouts.empty()) {
         ImGui::Separator();
@@ -242,9 +240,18 @@ void Panels::draw_stage2_grid(SimulationContext& ctx, Analyzer& analyzer, Applic
     }
 }
 
-void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
-    ImGui::Text("Frequency Sensitivity Sweep");
+void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer, float& current_freq) {
+    ImGui::Text("Frequency Sensitivity Sweep & Auto-Tuner");
     ImGui::Text("Layout locked with %d transducers.", (int)ctx.transducers.size());
+    
+    // FIXED: Upgraded InputFloat to InputDouble to match the physics engine's precision
+    if (ImGui::CollapsingHeader("Auto-Tuner Target Goals", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::InputDouble("Amplifier Max Power (W)", &ctx.transducer_max_power_w);
+        ImGui::InputDouble("Hardware Gain Knob (0.0 - 1.0)", &ctx.hardware_amp_gain);
+        ImGui::InputDouble("Target Plate Acceleration (G)", &ctx.target_g_force);
+        ImGui::InputDouble("Reference Sand Mass (mg)", &ctx.particle_mass_mg);
+        ImGui::Separator();
+    }
     
     static ::std::vector<LayoutResult> sweep_results;
     static ::std::future<::std::vector<LayoutResult>> sweep_future;
@@ -268,24 +275,47 @@ void Panels::draw_stage3_sweep(SimulationContext& ctx, Analyzer& analyzer) {
             analyzer.export_to_json("../master_symbols.json", sweep_results, ctx);
         }
 
-        if (ImGui::BeginTable("SweepResults", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
-            ImGui::TableSetupColumn("Mode");
+        // FIXED: Expanded 5-column AGC Display showing actual theoretical power
+        if (ImGui::BeginTable("SweepResults", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY, ImVec2(0, 300))) {
             ImGui::TableSetupColumn("Freq (Hz)");
-            ImGui::TableSetupColumn("Amp (W)");
+            ImGui::TableSetupColumn("Digital Amp");
+            ImGui::TableSetupColumn("G Force");
+            ImGui::TableSetupColumn("Req. Power");
             ImGui::TableSetupColumn("Action");
             ImGui::TableHeadersRow();
 
             for (auto& res : sweep_results) {
                 ImGui::TableNextRow();
+                
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text("%s", res.layout_type.c_str());
-                ImGui::TableSetColumnIndex(1);
                 ImGui::Text("%.1f", res.best_layout[0].frequency.value_or(0.0));
+                
+                ImGui::TableSetColumnIndex(1);
+                if (res.is_clipping) {
+                    // Symbol cannot reach target force. Tell user what software volume would technically be required.
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "Req: %.2f", res.required_digital_amp);
+                } else {
+                    ImGui::TextColored(ImVec4(0, 1, 0, 1), "%.2f", res.required_digital_amp);
+                }
+
                 ImGui::TableSetColumnIndex(2);
-                ImGui::Text("%.2f", res.best_layout[0].amplitude);
+                if (res.is_clipping) {
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "%.1f (Max)", res.achieved_g);
+                } else {
+                    ImGui::TextColored(ImVec4(0, 1, 0, 1), "%.1f (OK)", res.achieved_g);
+                }
+
                 ImGui::TableSetColumnIndex(3);
+                if (res.is_clipping) {
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "%.1f W", res.required_power_w);
+                } else {
+                    ImGui::Text("%.1f W", res.required_power_w);
+                }
+
+                ImGui::TableSetColumnIndex(4);
                 if (ImGui::Button(("Apply##" + res.layout_type).c_str())) {
                     ctx.transducers = res.best_layout;
+                    current_freq = static_cast<float>(res.best_layout[0].frequency.value_or(0.0));
                 }
             }
             ImGui::EndTable();
@@ -362,8 +392,9 @@ void Panels::draw_stage5_calibration(SimulationContext& ctx) {
             double n = static_cast<double>(points.size());
             double denominator = (n * sum_x2 - sum_x * sum_x);
             if (::std::abs(denominator) > 1e-9) {
-                ctx.calib_m = static_cast<float>((n * sum_xy - sum_x * sum_y) / denominator);
-                ctx.calib_b = static_cast<float>((sum_y - ctx.calib_m * sum_x) / n);
+                // FIXED: Removed the static_cast<float> since calib_m and calib_b are now doubles
+                ctx.calib_m = (n * sum_xy - sum_x * sum_y) / denominator;
+                ctx.calib_b = (sum_y - ctx.calib_m * sum_x) / n;
             }
         }
     }
@@ -374,8 +405,8 @@ void Panels::draw_stage5_calibration(SimulationContext& ctx) {
     ImGui::Text("f_actual = %.6f * f_theoretical + %.2f", ctx.calib_m, ctx.calib_b);
     
     if (ImGui::Button("Reset to Ideal (1.0, 0.0)")) {
-        ctx.calib_m = 1.0f;
-        ctx.calib_b = 0.0f;
+        ctx.calib_m = 1.0;
+        ctx.calib_b = 0.0;
     }
 }
 

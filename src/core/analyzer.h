@@ -27,10 +27,15 @@ struct LayoutResult {
   double param1, param2;
   double total_displacement = 0.0;
   
-  // NEW: Tracking exact grid coordinates for Heatmap Highlighting
   float grid_dx = 0.0f;
   float grid_dy = 0.0f;
   
+  // NEW: Tracking Auto-Tuner metrics (Clipping is allowed, just marked)
+  float achieved_g = 0.0f;
+  float required_power_w = 0.0f;
+  float required_digital_amp = 0.0f;
+  bool is_clipping = false;
+
   bool export_selected = true;
 };
 
@@ -71,7 +76,6 @@ class Analyzer {
   const HeatmapData& get_heatmap_data() const { return heatmap_; }
   bool load_sim_results(const ::std::string& filepath, SimulationContext& ctx);
   
-  // NEW: Global Top Layouts persistence
   const ::std::vector<LayoutResult>& get_top_layouts() const { return top_layouts_; }
   void clear_heatmap() { heatmap_.valid = false; heatmap_.scores.clear(); top_layouts_.clear(); }
 

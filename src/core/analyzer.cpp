@@ -74,8 +74,8 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
             modes_evaluated_++; 
             
             double theoretical_f = physics_->calculate_mode_frequency(n, m, eval_ctx);
-            double freq = (theoretical_f * base_ctx.calib_m) + base_ctx.calib_b;
-            if (freq > base_ctx.max_frequency) continue;
+            double base_freq = (theoretical_f * base_ctx.calib_m) + base_ctx.calib_b;
+            if (base_freq > base_ctx.max_frequency) continue;
 
             ::std::vector<double> phases = physics_->snipe_phases(n, m, eval_ctx);
             double max_c = 1e-9;
@@ -88,24 +88,40 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
 
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
                 eval_ctx.transducers[i].phase_rad = phases[i];
-                eval_ctx.transducers[i].frequency = freq;
+                eval_ctx.transducers[i].frequency = base_freq;
                 eval_ctx.transducers[i].amplitude = couplings[i] / max_c;
             }
 
-            if (!physics_->validate_power(freq, eval_ctx)) continue;
+            if (!physics_->validate_power(base_freq, eval_ctx)) continue;
             
             feasible_count++;
-            Eigen::MatrixXcd resp = physics_->compute_driven_response(freq, eval_ctx);
-            Eigen::MatrixXd energy = resp.array().abs();
+
+            double best_f = base_freq;
+            double max_peak = 0.0;
+            Eigen::MatrixXcd best_resp;
+            
+            for (double f = base_freq - 10.0; f <= base_freq + 10.0; f += 10.0) {
+                Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
+                double peak = resp.array().abs().maxCoeff();
+                if (peak > max_peak) {
+                    max_peak = peak;
+                    best_f = f;
+                    best_resp = std::move(resp);
+                }
+            }
+
+            double freq = best_f;
+            Eigen::MatrixXd energy = best_resp.array().abs();
             double total_disp = energy.sum();
 
             bool unique = true;
             for (auto it = unique_modes.begin(); it != unique_modes.end(); ) {
-                if (::std::abs(freq - it->freq) < 10.0) {
+                if (::std::abs(freq - it->freq) < 30.0) {
                     double dot = (energy.array() * it->energy.array()).sum();
                     double norm_prod = ::std::sqrt((energy.array().pow(2)).sum()) * ::std::sqrt((it->energy.array().pow(2)).sum());
                     double similarity = (norm_prod > 1e-12) ? dot / norm_prod : 0.0;
-                    if (similarity > 0.90) {
+                    
+                    if (similarity > 0.85) { 
                         if (total_disp > it->total_disp) { it = unique_modes.erase(it); continue; } 
                         else { unique = false; break; }
                     }
@@ -113,7 +129,7 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
                 double dot = (energy.array() * it->energy.array()).sum();
                 double norm_prod = ::std::sqrt((energy.array().pow(2)).sum()) * ::std::sqrt((it->energy.array().pow(2)).sum());
                 double similarity = (norm_prod > 1e-12) ? dot / norm_prod : 0.0;
-                if (similarity > 0.98) { unique = false; break; }
+                if (similarity > 0.95) { unique = false; break; }
                 ++it;
             }
             if (unique) unique_modes.push_back({freq, energy, total_disp});
@@ -225,8 +241,6 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
             char buf[128];
             ::std::snprintf(buf, sizeof(buf), "%s (dx=%.3f, dy=%.3f)", tasks[i].name.c_str(), tasks[i].dx, tasks[i].dy);
             res.layout_type = ::std::string(buf);
-            
-            // Map the exact grid coordinates to highlight in the heatmap later
             res.grid_dx = static_cast<float>(tasks[i].dx);
             res.grid_dy = static_cast<float>(tasks[i].dy);
             
@@ -252,9 +266,9 @@ LayoutResult Analyzer::evaluate_layout(const ::std::vector<Transducer>& layout, 
     });
     
     if (candidates.size() > 10) candidates.resize(10);
-    top_layouts_ = candidates; // Store in global memory state
+    top_layouts_ = candidates; 
     
-    auto_export_sim_results(base_ctx); // Export the global state
+    auto_export_sim_results(base_ctx); 
 
     grid_progress_ = 1.0f;
     is_analyzing_ = false;
@@ -326,14 +340,13 @@ bool Analyzer::load_sim_results(const ::std::string& filepath, SimulationContext
 
     top_layouts_.clear();
     
-    // Load Top Layouts Array to sync with UI
     if (root.contains("top_layouts")) {
         for (const auto& item : root["top_layouts"]) {
             LayoutResult res;
             res.alphabet_size = item.value("alphabet_size", 0);
             res.layout_type = item.value("layout_type", "");
             res.total_displacement = item.value("total_displacement", 0.0);
-            res.grid_dx = item.value("grid_dx", -1.0f); // Default to -1 to detect legacy files
+            res.grid_dx = item.value("grid_dx", -1.0f);
             res.grid_dy = item.value("grid_dy", -1.0f);
             
             if (item.contains("transducers")) {
@@ -346,8 +359,7 @@ bool Analyzer::load_sim_results(const ::std::string& filepath, SimulationContext
                     res.best_layout.push_back(t);
                 }
             }
-            
-            // Backward compatibility for JSONs generated before grid_dx/dy was tracked
+
             if (res.grid_dx < 0.0f && !res.best_layout.empty()) {
                 res.grid_dx = static_cast<float>(::std::abs(res.best_layout[0].x));
                 res.grid_dy = static_cast<float>(::std::abs(res.best_layout[0].y));
@@ -393,8 +405,10 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         symbol["display_name"] = "CHLADNI_" + ::std::to_string(freq_int);
         
         nlohmann::json hw_config;
-        hw_config["base_volume_1"] = round_to(ctx.base_volume_1, 3);
-        hw_config["base_volume_2"] = round_to(ctx.base_volume_2, 3);
+        
+        // FIXED: Exporting the correct constant Hardware Amp Gain replacing base_volumes
+        hw_config["hardware_amp_gain"] = round_to(ctx.hardware_amp_gain, 3);
+        hw_config["max_power_w"] = round_to(ctx.transducer_max_power_w, 3);
         
         nlohmann::json channels = nlohmann::json::array();
         for (size_t i = 0; i < res.best_layout.size(); ++i) {
@@ -444,6 +458,12 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         double total_disp;
         ::std::vector<Transducer> layout;
         ::std::string type;
+        
+        // NEW: Storing Auto-Tuner logic
+        float achieved_g;
+        float power_w;
+        float req_digital_amp;
+        bool clipping;
     };
     ::std::vector<ModeInfo> unique_modes;
 
@@ -458,7 +478,6 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
             if (calibrated_f > base_ctx.max_frequency) continue;
             
             ::std::vector<double> phases = physics_->snipe_phases(n, m, eval_ctx);
-            
             double max_c = 1e-9;
             ::std::vector<double> couplings(eval_ctx.transducers.size());
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
@@ -467,9 +486,11 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
                 if (couplings[i] > max_c) max_c = couplings[i];
             }
 
+            // 1. Setup the "Test Drive" at Digital Amp = 1.0. 
+            // We scale the raw coupling to reflect your hardware constraints.
             for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
                 eval_ctx.transducers[i].phase_rad = phases[i];
-                eval_ctx.transducers[i].amplitude = couplings[i] / max_c;
+                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c) * eval_ctx.hardware_amp_gain;
                 eval_ctx.transducers[i].frequency = calibrated_f;
             }
             
@@ -481,20 +502,14 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
                 double f = (calibrated_f - window) + (2.0 * window / 20.0 * i);
                 Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
                 double peak = resp.array().abs().maxCoeff();
-                if (peak > max_peak) {
-                    max_peak = peak;
-                    best_f = f;
-                }
+                if (peak > max_peak) { max_peak = peak; best_f = f; }
             }
             
             double fine_center = best_f;
             for (double f = fine_center - 15.0; f <= fine_center + 15.0; f += 0.5) {
                 Eigen::MatrixXcd resp = physics_->compute_driven_response(f, eval_ctx);
                 double peak = resp.array().abs().maxCoeff();
-                if (peak > max_peak) {
-                    max_peak = peak;
-                    best_f = f;
-                }
+                if (peak > max_peak) { max_peak = peak; best_f = f; }
             }
             
             double freq = best_f;
@@ -504,9 +519,31 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
 
             if (!physics_->validate_power(freq, eval_ctx)) continue;
 
+            // --- AUTO-TUNER AGC LOOP ---
             Eigen::MatrixXcd resp = physics_->compute_driven_response(freq, eval_ctx);
             Eigen::MatrixXd energy = resp.array().abs();
             double total_disp = energy.sum();
+            
+            // 2. Calculate Test Drive G-Force (at Digital Amp = 1.0)
+            double peak_displacement_m = energy.maxCoeff();
+            double omega = 2.0 * M_PI * freq;
+            double peak_acceleration = peak_displacement_m * omega * omega;
+            double test_g_force = peak_acceleration / 9.81;
+
+            // 3. Calculate Scale Factor to hit Target G
+            double target_g = static_cast<double>(eval_ctx.target_g_force);
+            double req_digital_amp = target_g / (test_g_force > 1e-12 ? test_g_force : 1e-12);
+            bool clipped = (req_digital_amp > 1.0);
+            
+            double theoretical_power = req_digital_amp * eval_ctx.hardware_amp_gain * eval_ctx.transducer_max_power_w;
+
+            // 4. Apply back the final digital amps
+            for (size_t i = 0; i < eval_ctx.transducers.size(); ++i) {
+                eval_ctx.transducers[i].amplitude = (couplings[i] / max_c) * (clipped ? 1.0 : req_digital_amp);
+            }
+            
+            float final_g = clipped ? static_cast<float>(test_g_force) : static_cast<float>(target_g);
+            // ---------------------------
 
             bool unique = true;
             for (auto it = unique_modes.begin(); it != unique_modes.end(); ) {
@@ -536,7 +573,8 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
             }
 
             if (unique) {
-                unique_modes.push_back({freq, energy, total_disp, eval_ctx.transducers, "Mode_" + ::std::to_string(n) + "_" + ::std::to_string(m)});
+                unique_modes.push_back({freq, energy, total_disp, eval_ctx.transducers, "Mode_" + ::std::to_string(n) + "_" + ::std::to_string(m), 
+                                        final_g, static_cast<float>(theoretical_power), static_cast<float>(req_digital_amp), clipped});
             }
         }
     }
@@ -547,6 +585,10 @@ void Analyzer::export_to_json(const ::std::string& path, const ::std::vector<Lay
         res.alphabet_size = 1;
         res.layout_type = m.type;
         res.total_displacement = m.total_disp;
+        res.achieved_g = m.achieved_g;
+        res.required_power_w = m.power_w;
+        res.required_digital_amp = m.req_digital_amp;
+        res.is_clipping = m.clipping;
         results.push_back(res);
     }
 
